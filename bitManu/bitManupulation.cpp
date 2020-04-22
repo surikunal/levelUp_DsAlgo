@@ -54,35 +54,9 @@ void set1()
     cout << countBits(n) << endl;
 }
 
-// 191
-int hammingWeight(uint32_t num)
-{
-    int count = 0;
-    while (num != 0)
-    {
-        num &= (num - 1);
-        count++;
-    }
-    return count;
-}
-
-void set2()
-{
-    /* leetcode */
-    // 191
-    // cout << hammingWeight(00000000000000000000000000001011) << endl;
-
-    // 338
-
-
-    // 137
-    
-}
-
 void solve()
 {
-    // set1();
-    set2();
+    set1();
 }
 
 int main(int args, char **argv)
