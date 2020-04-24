@@ -14,7 +14,7 @@ void KthONtoOFF(int &n, int k)
     n &= mask;
 }
 
-int countNumOfSetBits(int num)
+int countNumOfSetBits(int num)  //O(logN)
 {
     int count = 0;
     int totalBits = 32;

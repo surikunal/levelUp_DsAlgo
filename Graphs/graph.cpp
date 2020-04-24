@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <vector>
+#include <queue>
 
 #define vi vector<int>
 #define vb vector<bool>
@@ -263,7 +264,7 @@ int gcc_dfs(int idx, vb &vis)
     for (Edge e : graph[idx])
         if (!vis[idx])
             count += gcc_dfs(e.v, vis);
-    
+
     return count + 1;
 }
 
@@ -309,10 +310,138 @@ void set1()
     cout << getConnectedComponents() << endl;
 }
 
+void bfs(int src, vector<bool>& vis)
+{
+    queue<pair<int, string>> que;
+    que.push({src, to_string(src) + ""});   // as it is pair so we have to push it like this
+
+    int desti = 6;
+    
+    while (que.size() != 0)
+    {
+        pair<int, string> rvtx = que.front();
+        que.pop();
+
+        if (vis[rvtx.first])
+        {
+            cout << "Cycle path: " << rvtx.second << endl;
+            continue;
+        }
+
+        if (rvtx.first == desti)
+        {
+            cout << "destination path: " << rvtx.second << endl;
+        }
+
+        vis[rvtx.first] = true;     // as it is pair
+        for (Edge e: graph[rvtx.first])
+        {
+            if (!vis[e.v])
+            {
+                que.push({e.v, rvtx.second + to_string(e.v)});
+            }
+        }
+    }
+}
+
+void bfs1(int src, vector<int> &vis)
+{
+    queue<int> que;
+    int level = 0;
+    int cycle = 0;
+    int desti = 6;
+    que.push(src);
+    que.push(-1);
+
+    while (que.size() != 0)
+    {
+        int rvtx = que.front();
+        que.pop();
+
+        if (rvtx == -1)
+        {
+            level++;
+            que.push(-1);
+            continue;
+        }
+
+        if (vis[rvtx])
+        {
+            cout << "cycle: " << ++cycle << " @ " << rvtx << endl;
+            continue;
+        }
+
+        if (rvtx == desti)
+        {
+            cout << "goal: " << level << endl;
+        }
+        vis[rvtx] = true;
+        for (Edge e : graph[rvtx])
+        {
+            if (!vis[e.v])
+            {
+                que.push(e.v);
+            }
+        }
+    }
+}
+
+void bfs2(int src, vector<int> &vis)
+{
+    int desti = 6;
+    queue<int> que;
+    int cycle = 0;
+    int level = 0;
+    bool isDest = false;
+    que.push(src);
+
+    while (que.size() != 0)
+    {
+        int size = que.size();
+        while (size-- > 0)
+        {
+            int rvtx = que.front();
+            que.pop();
+
+            if (vis[rvtx])
+            {
+                cout << "cycle: " << ++cycle << " @ " << rvtx << endl;
+                continue;
+            }
+
+            if (rvtx == desti && !isDest)
+            {
+                cout << "goal : "<< level << endl;
+                isDest = true;
+            }
+
+            vis[rvtx] = true;
+            for (Edge e : graph[rvtx])
+            {
+                if (!vis[rvtx])
+                {
+                    que.push(e.v);
+                }
+            }
+        }
+        level++;
+    }
+}
+
+void set2()
+{
+    vector<int> visInt(N, false);
+    vector<bool> visBool(N, false);
+    bfs(0, visBool);
+    // bfs1(0, visInt);
+    // bfs2(0, visInt);
+}
+
 void solve()
 {
     constructGraph();
     // set1();
+    set2();
 }
 
 int main(int args, char **argv)
