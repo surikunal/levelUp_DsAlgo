@@ -84,7 +84,7 @@ void addEdge(vector<vector<Edge>> &gp, int u, int v, int w)
     //     return;
 
     gp[u].push_back(Edge(v, w)); // but if we make it on heap then we have to write = new Edge(v, w)
-    gp[v].push_back(Edge(u, w));
+    // gp[v].push_back(Edge(u, w));     // comment for toposort
 }
 
 void constructGraph()
@@ -310,13 +310,13 @@ void set1()
     cout << getConnectedComponents() << endl;
 }
 
-void bfs(int src, vector<bool>& vis)
+void bfs(int src, vector<bool> &vis)
 {
     queue<pair<int, string>> que;
-    que.push({src, to_string(src) + ""});   // as it is pair so we have to push it like this
+    que.push({src, to_string(src) + ""}); // as it is pair so we have to push it like this
 
     int desti = 6;
-    
+
     while (que.size() != 0)
     {
         pair<int, string> rvtx = que.front();
@@ -333,8 +333,8 @@ void bfs(int src, vector<bool>& vis)
             cout << "destination path: " << rvtx.second << endl;
         }
 
-        vis[rvtx.first] = true;     // as it is pair
-        for (Edge e: graph[rvtx.first])
+        vis[rvtx.first] = true; // as it is pair
+        for (Edge e : graph[rvtx.first])
         {
             if (!vis[e.v])
             {
@@ -386,13 +386,12 @@ void bfs1(int src, vector<int> &vis)
     }
 }
 
-void bfs2(int src, vector<int> &vis)
+void bfs2(int src, vector<bool> &vis)
 {
     int desti = 6;
     queue<int> que;
     int cycle = 0;
     int level = 0;
-    bool isDest = false;
     que.push(src);
 
     while (que.size() != 0)
@@ -405,20 +404,20 @@ void bfs2(int src, vector<int> &vis)
 
             if (vis[rvtx])
             {
-                cout << "cycle: " << ++cycle << " @ " << rvtx << endl;
+                cout << "cycle no " + to_string(cycle) + " at : " << rvtx << endl;
+                cycle++;
                 continue;
             }
 
-            if (rvtx == desti && !isDest)
+            if (rvtx == desti)
             {
-                cout << "goal : "<< level << endl;
-                isDest = true;
+                cout << "destination : " << level << endl;
             }
 
             vis[rvtx] = true;
             for (Edge e : graph[rvtx])
             {
-                if (!vis[rvtx])
+                if (!vis[e.v])
                 {
                     que.push(e.v);
                 }
@@ -428,13 +427,93 @@ void bfs2(int src, vector<int> &vis)
     }
 }
 
+void bfs3(int src, vector<bool> &vis)
+{
+    int desti = 6;
+    queue<int> que;
+    int cycle = 0;
+    int level = 0;
+    que.push(src);
+
+    while (que.size() != 0)
+    {
+        int size = que.size();
+        while (size-- > 0)
+        {
+            int rvtx = que.front();
+            que.pop();
+
+            if (rvtx == desti)
+            {
+                cout << "destination : " << level << endl;
+            }
+
+            for (Edge e : graph[rvtx])
+            {
+                if (!vis[e.v])
+                {
+                    que.push(e.v);
+                    vis[rvtx] = true;
+                }
+            }
+        }
+        level++;
+    }
+}
+
+bool isBipatite_BFS()
+{
+    // loop is for when graph is divided in pieces 
+    // so we have to check for each peace
+
+    vector<int> vis(N, -1);
+    for (int i = 0; i < N; i++)
+    {
+
+    }
+}
+
+void topoSort_(int src, vector<bool>& vis, vector<int>& stack)
+{
+    vis[src] = false;
+    for (Edge e: graph[src])
+    {
+        if (!vis[e.v])
+        {
+            topoSort_(e.v, vis, stack);
+        }
+    }
+
+    stack.push_back(src);
+}
+
+void topologicalSort()
+{
+    vector<bool> vis(N, false);
+    vector<int> stack;
+
+    for (int i = 0; i < N; i++)
+    {
+        if (!vis[i])
+        {
+            topoSort_(i, vis, stack);
+        }
+    }
+}
+
 void set2()
 {
     vector<int> visInt(N, false);
     vector<bool> visBool(N, false);
-    bfs(0, visBool);
+    // bfs(0, visBool);
     // bfs1(0, visInt);
-    // bfs2(0, visInt);
+    // bfs2(0, visBool);
+    // bfs3(0, visBool); // when cycle is not a concern
+
+
+    // isBipatite_BFS();
+
+    topologicalSort();
 }
 
 void solve()

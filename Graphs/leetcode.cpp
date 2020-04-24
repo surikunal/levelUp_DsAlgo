@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <queue>
+#include <algorithm>
 
 #define vvc vector<vector<char>>
 
@@ -339,5 +340,135 @@ public:
             }
         }
         return level == 0 ? 0 : level - 1;
+    }
+};
+
+// 207. =================================================
+
+class Solution
+{
+public:
+    vector<int> kahnsAlgo(int n, vector<vector<int>> &graph, vector<vector<int>> &prerequisites)
+    {
+        vector<int> indegree(n, 0);
+        for (vector<int> ar : prerequisites)
+        {
+            indegree[ar[1]]++;
+        }
+
+        queue<int> que;
+        for (int i = 0; i < n; i++)
+        {
+            if (indegree[i] == 0)
+            {
+                que.push(i);
+            }
+        }
+
+        vector<int> ans;
+        while (que.size() != 0)
+        {
+            int size = que.size();
+            while (size-- > 0)
+            {
+                int rvtx = que.front();
+                que.pop();
+
+                ans.push_back(rvtx);
+
+                for (int ele : graph[rvtx])
+                {
+                    if (--indegree[ele] == 0)
+                    {
+                        que.push(ele);
+                    }
+                }
+            }
+        }
+        return ans;
+    }
+
+    bool canFinish(int numCourses, vector<vector<int>> &prerequisites)
+    {
+
+        // that is how we make graph
+
+        vector<vector<int>> graph(numCourses, vector<int>());
+        for (vector<int> ar : prerequisites)
+        {
+            graph[ar[0]].push_back(ar[1]);
+        }
+
+        // now call kahns algo
+        vector<int> ans = kahnsAlgo(numCourses, graph, prerequisites);
+
+        return ans.size() == numCourses;
+    }
+};
+
+// 210 . =========================================================
+
+class Solution
+{
+public:
+    vector<int> kahnsAlgo(int n, vector<vector<int>> &graph, vector<vector<int>> &prerequisites)
+    {
+        vector<int> indegree(n, 0);
+        for (vector<int> ar : prerequisites)
+        {
+            indegree[ar[1]]++;
+        }
+
+        queue<int> que;
+        for (int i = 0; i < n; i++)
+        {
+            if (indegree[i] == 0)
+            {
+                que.push(i);
+            }
+        }
+
+        vector<int> ans;
+        while (que.size() != 0)
+        {
+            int size = que.size();
+            while (size-- > 0)
+            {
+                int rvtx = que.front();
+                que.pop();
+
+                ans.push_back(rvtx);
+
+                for (int ele : graph[rvtx])
+                {
+                    if (--indegree[ele] == 0)
+                    {
+                        que.push(ele);
+                    }
+                }
+            }
+        }
+        return ans;
+    }
+
+    vector<int> findOrder(int numCourses, vector<vector<int>> &prerequisites)
+    {
+
+        // that is how we make graph
+
+        vector<vector<int>> graph(numCourses, vector<int>());
+        for (vector<int> ar : prerequisites)
+        {
+            graph[ar[0]].push_back(ar[1]);
+        }
+
+        // now call kahns algo
+        vector<int> ans = kahnsAlgo(numCourses, graph, prerequisites);
+
+        reverse(ans.begin(), ans.end());
+        if (ans.size() != numCourses)
+            return {};
+        else
+            return ans;
     }
 };
