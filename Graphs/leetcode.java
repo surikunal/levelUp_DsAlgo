@@ -140,3 +140,6 @@ class Solution3 {
         return count;
     }
 }
+
+
+//! cpp have some extra question so pls kindly check there

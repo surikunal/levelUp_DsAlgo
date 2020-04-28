@@ -46,21 +46,15 @@ public class graph {
         // addEdge(graph, 4, 6, 3);
         // addEdge(graph, 5, 6, 8);
 
-        // graph[7].add(5);
-        // graph[7].add(6);
-        // graph[5].add(4);
-        // graph[5].add(2);
-        // graph[6].add(4);
-        // graph[6].add(3);
-        // graph[2].add(1);
-        // graph[3].add(1);
-        // graph[1].add(0);
-
-        graph[0].add(1);
-        graph[1].add(2);
-        graph[2].add(3);
-        graph[3].add(4);
-
+        graph[7].add(5);
+        graph[7].add(6);
+        graph[5].add(4);
+        graph[5].add(2);
+        graph[6].add(4);
+        graph[6].add(3);
+        graph[2].add(1);
+        graph[3].add(1);
+        graph[1].add(0);
         display();
     }
 
@@ -128,13 +122,69 @@ public class graph {
             System.out.println(ans);
     }
 
+    // //* SCC
+    // public static void SCC_DFS(int src, ArrayList<Integer> vis, vector<vector<int>>& )
+    // {
+    //     vis[src] = true;
+    //     for (int e: newGraph[src])
+    //     {
+    //         if (!vis[e])
+    //         {
+    //             count +=  SCC_DFS(e, vis, newGraph, ans);
+    //         }
+    //     }
+    // }
+
+    // public static void stronglyConnectedComponents()
+    // {
+    //     boolean[] vis = new boolean[N];
+    //     ArrayList<Integer> ans = new ArrayList<>();
+
+    //     for (int i = 0; i < N; i++)
+    //     {
+    //         if (!vis[i])
+    //         {
+    //             topoSort_(i, vis, ans);
+    //         }
+    //     }
+
+    //     ArrayList<Integer>[] newGraph = new ArrayList[N];
+    //     for (int i = 0; i < N; i++)
+    //     {
+    //         newGraph[i] = new ArrayList<>();
+    //     }
+
+    //     for (int i = 0; i < N; i++)
+    //     {
+    //         for (int ele : graph[i])
+    //         {
+    //             newGraph[ele].add(i);
+    //         }
+    //     }
+
+    //     vis = new Boolean[N];
+        
+    //     // taversing opposite due to stack
+    //     for (int i = ans.size() - 1; i >= 0; i--)
+    //     {
+    //         if (!vis[ans.get(i)])
+    //         {
+    //             ArrayList<Integer> ans_ = new ArrayList<>();
+    //             System.out.println(SCC_DFS(ans.get(i), newGraph, vis, ans_));
+    //             System.out.println(ans_);
+    //         }
+    //     }
+    // }
+
     public static void solve() {
         constructGraph();
         // topoSort();
-        khansAlgo_topoInBFS();
+        // khansAlgo_topoInBFS();
+        stronglyConnectedComponents();
     }
 
     public static void main(String[] args) {
         solve();
     }
 }
+

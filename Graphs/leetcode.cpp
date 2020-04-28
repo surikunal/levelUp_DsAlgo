@@ -454,7 +454,7 @@ public:
     vector<int> findOrder(int numCourses, vector<vector<int>> &prerequisites)
     {
 
-        // that is how we make graph
+        //* this is how we make graph
 
         vector<vector<int>> graph(numCourses, vector<int>());
         for (vector<int> ar : prerequisites)
@@ -470,5 +470,76 @@ public:
             return {};
         else
             return ans;
+    }
+};
+
+// 329. ========================================================
+
+class Solution
+{
+public:
+    int longestIncreasingPath(vector<vector<int>> &matrix)
+    {
+        int n = matrix.size();
+
+        if (n == 0)
+            return 0;
+        int m = matrix[0].size();
+        if (m == 0)
+            return 0;
+        vector<vector<int>> dirA = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        vector<vector<int>> outdegree(n, vector<int>(m, 0));
+
+        int length = 0;
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                for (int d = 0; d < 4; d++) // this loop is constant so this code n^2
+                {
+                    int x = i + dirA[d][0];
+                    int y = j + dirA[d][1];
+
+                    if (x >= 0 and y >= 0 and x < n and y < m and matrix[x][y] > matrix[i][j])
+                        outdegree[x][y]++;
+                }
+            }
+        }
+
+        queue<int> que;
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                if (outdegree[i][j] == 0)
+                {
+                    que.push(i * m + j);
+                }
+            }
+        }
+
+        while (que.size() != 0)
+        {
+            int size = que.size();
+            while (size-- > 0)
+            {
+                int rvtx = que.front();
+                que.pop();
+
+                int i = rvtx / m;
+                int j = rvtx % m;
+
+                for (int d = 0; d < 4; d++)
+                {
+                    int x = i + dirA[d][0];
+                    int y = j + dirA[d][1];
+
+                    if (x >= 0 and x < n and y >= 0 and y < m and matrix[x][y] > matrix[i][j] and --outdegree[x][y] == 0)
+                        que.push(x * m + y);
+                }
+            }
+            length++;
+        }
+        return length;
     }
 };

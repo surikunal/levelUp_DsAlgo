@@ -98,7 +98,7 @@ void constructGraph()
     addEdge(graph, 4, 6, 3);
     addEdge(graph, 5, 6, 8);
 
-    addEdge(graph, 2, 5, 2);
+    // addEdge(graph, 2, 5, 2);
 
     display(graph);
     cout << endl;
@@ -314,7 +314,7 @@ void bfs(int src, vector<bool> &vis)
 {
     queue<pair<int, string>> que;
     que.push({src, to_string(src) + ""}); // as it is pair so we have to push it like this
-
+    // and to type cast it to string we have added an enpty string to src
     int desti = 6;
 
     while (que.size() != 0)
@@ -461,22 +461,61 @@ void bfs3(int src, vector<bool> &vis)
     }
 }
 
-bool isBipatite_BFS()
+bool isBipatite_BFS_(int src, vector<int> &vis)
 {
-    // loop is for when graph is divided in pieces 
+    queue<pair<int, int>> que; // first is src , second is color
+    que.push({src, 0});        // src is red
+    int cycle = 0;
+
+    while (que.size() != 0)
+    {
+        int size = que.size();
+        while (size-- > 0)
+        {
+            pair<int, int> rvtx = que.front();
+            que.pop();
+
+            if (vis[rvtx.first] != -1) // already visited cycle
+            {
+                cycle++;
+                if (vis[rvtx.first] != rvtx.second) // check for conflict
+                {
+                    return false;
+                }
+            }
+
+            vis[rvtx.first] = rvtx.second;
+            for (Edge e : graph[rvtx.first])
+            {
+                if (vis[e.v] == -1)
+                {
+                    que.push({e.v, (rvtx.second + 1) % 2});
+                }
+            }
+        }
+    }
+    return true;
+}
+
+void isBipatite_BFS()
+{
+    // loop is for when graph is divided in pieces
     // so we have to check for each peace
 
-    vector<int> vis(N, -1);
+    vector<int> vis(N, -1); // -1 : unvisited, 0 : red, 1 : green
     for (int i = 0; i < N; i++)
     {
-
+        if (vis[i] == -1)
+        {
+            cout << (boolalpha) << isBipatite_BFS_(i, vis) << endl;
+        }
     }
 }
 
-void topoSort_(int src, vector<bool>& vis, vector<int>& stack)
+void topoSort_(int src, vector<bool> &vis, vector<int> &stack)
 {
     vis[src] = false;
-    for (Edge e: graph[src])
+    for (Edge e : graph[src])
     {
         if (!vis[e.v])
         {
@@ -505,22 +544,21 @@ void set2()
 {
     vector<int> visInt(N, false);
     vector<bool> visBool(N, false);
-    // bfs(0, visBool);
-    // bfs1(0, visInt);
-    // bfs2(0, visBool);
-    // bfs3(0, visBool); // when cycle is not a concern
+    bfs(0, visBool);
+    bfs1(0, visInt);
+    bfs2(0, visBool);
+    bfs3(0, visBool); // when cycle is not a concern
 
+    isBipatite_BFS();
 
-    // isBipatite_BFS();
-
-    topologicalSort();
+    topologicalSort();  //* check this function in java too
 }
 
 void solve()
 {
     constructGraph();
     // set1();
-    set2();
+    // set2();
 }
 
 int main(int args, char **argv)
