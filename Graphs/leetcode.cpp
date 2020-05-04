@@ -543,3 +543,234 @@ public:
         return length;
     }
 };
+
+// leetcode 815. ======================================================
+
+// class Solution
+// {
+// public:
+//     int numBusesToDestination(vector<vector<int>> &routes, int S, int T)
+//     {
+
+//     }
+// };
+
+// leetcode 684. =======================================================
+
+vector<int> par;
+vector<int> setSize;
+
+int findPar(int vtx)
+{
+    if (par[vtx] == vtx)
+        return vtx;
+    return par[vtx] = findPar(par[vtx]);
+}
+
+void mergeSet(int p1, int p2)
+{
+    if (setSize[p1] < setSize[p2])
+    {
+        par[p1] = p2;
+        setSize[p2] += setSize[p1];
+    }
+    else
+    {
+        par[p2] = p1;
+        setSize[p1] += setSize[p2];
+    }
+}
+
+vector<int> findRedundantConnection(vector<vector<int>> &edges)
+{
+    for (int i = 0; i <= edges.size(); i++)
+    {
+        par.push_back(i);
+        setSize.push_back(1);
+    }
+
+    for (vector<int> ar : edges)
+    {
+        int u = ar[0];
+        int v = ar[1];
+        int p1 = findPar(u);
+        int p2 = findPar(v);
+
+        if (p1 != p2)
+        {
+            mergeSet(p1, p2);
+        }
+        else
+        {
+            return ar;
+        }
+    }
+    return {};
+}
+
+// {{0, 0}, {0, 1}, {0, 2}} {{1, 0}, {1, 1}, {1, 2}} {{2, 0}, {2, 1}, {2, 2}}
+
+// = r *m + c
+
+//     = 0 * 3 + 0
+
+//       arr = [ [], [], [], [], [], [], [], [], [], [] ]
+
+// 1061. ================================================
+vector<int> par;
+int findPar(int vtx)
+{
+    if (par[vtx] = vtx)
+        return vtx;
+    return par[vtx] = findPar(par[vtx]);
+}
+
+string smallestEquivalentString(string A, string B, string S)
+{
+    vector<int> par;
+    for (int i = 0; i < 26; i++)
+        par.emplace_back(i);
+
+    for (int i = 0; i < A.length(); i++)
+    {
+        int p1 = findPar(A[i] - 'a');
+        int p2 = findPar(B[i] - 'a');
+        par[p1] = min(p1, p2);
+        par[p2] = min(p1, p2);
+    }
+
+    string ans = "";
+    for (int i = 0; i < S.length(); i++)
+        ans += (char)(findPar(S[i] - 'a') + 'a');
+
+    return ans;
+}
+
+// 200. =====================================================
+//* using union find method
+
+class Solution
+{
+public:
+    vector<int> par;
+    int findPar(int vtx)
+    {
+        if (par[vtx] == vtx)
+            return vtx;
+        return par[vtx] = findPar(par[vtx]);
+    }
+    int numIslands(vector<vector<char>> &grid)
+    {
+        int n = grid.size();
+        if (n == 0)
+            return 0;
+        int m = grid[0].size();
+        if (m == 0)
+            return 0;
+
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < m; j++)
+                par.push_back(i * m + j);
+
+        int noOfOnes = 0;
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                if (grid[i][j] == '1')
+                {
+                    noOfOnes++;
+                }
+            }
+        }
+
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < m; j++)
+            {
+                if (grid[i][j] == '1')
+                {
+                    if (j + 1 < m && grid[i][j + 1] == '1')
+                    {
+                        int p1 = findPar(i * m + j);
+                        int p2 = findPar(i * m + j + 1);
+
+                        if (p1 != p2)
+                        {
+                            par[p2] = p1;
+                            noOfOnes--;
+                        }
+                    }
+
+                    if (i + 1 < n && grid[i + 1][j] == '1')
+                    {
+                        int p1 = findPar(i * m + j);
+                        int p2 = findPar((i + 1) * m + j);
+
+                        if (p1 != p2)
+                        {
+                            par[p2] = p1;
+                            noOfOnes--;
+                        }
+                    }
+                }
+            }
+        }
+        return noOfOnes;
+    }
+};
+
+// 839. =====================================================
+
+class Solution
+{
+public:
+    // using union find method
+    vector<int> par;
+    int findPar(int vtx)
+    {
+        if (par[vtx] == vtx)
+            return vtx;
+        return par[vtx] = findPar(par[vtx]);
+    }
+
+    bool isSimilar(string &p, string &q)
+    {
+        int count = 0;
+        for (int i = 0; i < p.length(); i++)
+        {
+            if (p[i] != q[i] && ++count > 2)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    int numSimilarGroups(vector<string> &A)
+    {
+        int n = A.size();
+        for (int i = 0; i < n; i++)
+            par.emplace_back(i);
+
+        int group = n;
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = i + 1; j < n; j++)
+            {
+                if (isSimilar(A[i], A[j]))
+                {
+                    int p1 = findPar(i);
+                    int p2 = findPar(j);
+
+                    if (p1 != p2)
+                    {
+                        par[p1] = p2;
+                        group--;
+                    }
+                }
+            }
+        }
+        return group;
+    }
+};
