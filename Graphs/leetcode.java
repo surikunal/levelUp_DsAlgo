@@ -1,3 +1,4 @@
+import java.util.Arrays;
 
 // 130. ===========================================================
 
@@ -141,5 +142,49 @@ class Solution3 {
     }
 }
 
+// ! cpp have some extra question so pls kindly check there
 
-//! cpp have some extra question so pls kindly check there
+// 684. =====================================================
+
+class Solution4 {
+    int[] par;
+    int[] set_size;
+
+    public int[] findRedundantConnection(int[][] edges) {
+        int n = edges.length;
+        par = new int[n + 1];
+        set_size = new int[n + 1];
+        Arrays.fill(set_size, 1);
+        int[] ans = new int[0];
+        for (int i = 0; i <= n; i++) {
+            par[i] = i;
+        }
+        for (int[] edge : edges) {
+            int p1 = findpar(edge[0]);
+            int p2 = findpar(edge[1]);
+            if (p1 != p2) {
+                mergeset(p1, p2);
+            } else {
+                return edge;
+            }
+        }
+        return ans;
+    }
+
+    public int findpar(int vtx) {
+        if (par[vtx] == vtx)
+            return vtx;
+        return par[vtx] = findpar(par[vtx]);
+    }
+
+    public void mergeset(int p1, int p2) {
+        if (set_size[p1] < set_size[p2]) {
+            par[p1] = p2;
+            set_size[p2] += set_size[p1];
+        } else {
+            par[p2] = p1;
+            set_size[p1] += set_size[p2];
+        }
+    }
+
+}
