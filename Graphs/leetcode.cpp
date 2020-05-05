@@ -2,6 +2,8 @@
 #include <vector>
 #include <queue>
 #include <algorithm>
+#include <unordered_map>
+#include <unordered_set>
 
 #define vvc vector<vector<char>>
 
@@ -546,14 +548,59 @@ public:
 
 // leetcode 815. ======================================================
 
-// class Solution
-// {
-// public:
-//     int numBusesToDestination(vector<vector<int>> &routes, int S, int T)
-//     {
+class Solution
+{
+public:
+    int numBusesToDestination(vector<vector<int>> &routes, int S, int T)
+    {
+        int n = routes.size();
+        if (n == 0)
+            return -1;
 
-//     }
-// };
+        unordered_map<int, vector<int>> map;
+        for (int i = 0; i < n; i++)
+            for (int ele : routes[i])
+                map[ele].emplace_back(i);
+
+        unordered_set<int> busStandVis;
+        vector<bool> busVis(n, false);
+
+        queue<int> que;
+        que.push(S);
+        int level = 0;
+        busStandVis.insert(S);
+        while (que.size() != 0)
+        {
+            int size = que.size();
+            while (size-- > 0)
+            {
+                int stand = que.front();
+                que.pop();
+
+                if (stand == T)
+                    return level;
+
+                for (int bus : map[stand])
+                {
+                    if (busVis[bus])
+                        continue;
+
+                    for (int busStand : routes[bus])
+                    {
+                        if (busStandVis.count(busStand) == 0)
+                        {
+                            que.push(busStand);
+                            busStandVis.insert(busStand);
+                        }
+                    }
+                    busVis[bus] = true;
+                }
+            }
+            level++;
+        }
+        return -1;
+    }
+};
 
 // leetcode 684. =======================================================
 
@@ -607,14 +654,6 @@ vector<int> findRedundantConnection(vector<vector<int>> &edges)
     }
     return {};
 }
-
-// {{0, 0}, {0, 1}, {0, 2}} {{1, 0}, {1, 1}, {1, 2}} {{2, 0}, {2, 1}, {2, 2}}
-
-// = r *m + c
-
-//     = 0 * 3 + 0
-
-//       arr = [ [], [], [], [], [], [], [], [], [], [] ]
 
 // 1061. ================================================
 vector<int> par;
