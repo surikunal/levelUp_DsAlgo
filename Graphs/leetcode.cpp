@@ -655,6 +655,72 @@ vector<int> findRedundantConnection(vector<vector<int>> &edges)
     return {};
 }
 
+// leetcode 547. ========================================
+
+class Solution
+{
+public:
+    // we have to find total number of **circles** of friends
+    // means union find method
+    vector<int> par;
+    vector<int> setSize;
+
+    int findPar(int vtx)
+    {
+        if (par[vtx] == vtx)
+            return vtx;
+        return par[vtx] = findPar(par[vtx]);
+    }
+
+    void mergeSet(int p1, int p2)
+    {
+        if (setSize[p1] < setSize[p2])
+        {
+            par[p1] = p2;
+            setSize[p2] += setSize[p1];
+        }
+        else
+        {
+            par[p2] = p1;
+            setSize[p1] += setSize[p2];
+        }
+    }
+
+    int findCircleNum(vector<vector<int>> &arr)
+    {
+        if (arr.empty())
+            return 0;
+
+        int n = arr.size();
+        // declare self as parent
+        for (int i = 0; i < n; i++)
+        {
+            par.emplace_back(i);
+            setSize.emplace_back(1);
+        }
+
+        int count = n;
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = i + 1; j < n; j++) // started from (i+1) just to avoid re-calculation but it is OK if we start from 0 as well
+            {
+                if (arr[i][j] != 0 && i != j) // if direct friend
+                {
+                    int p1 = findPar(i);
+                    int p2 = findPar(j);
+
+                    if (p1 != p2)
+                    {
+                        count--;
+                        mergeSet(p1, p2);
+                    }
+                }
+            }
+        }
+        return count;
+    }
+};
+
 // 1061. ================================================
 vector<int> par;
 int findPar(int vtx)
@@ -813,3 +879,139 @@ public:
         return group;
     }
 };
+
+// 1168. =======================================================
+//* premium question
+class Solution
+{
+public:
+    vector<int> par;
+    int findPar(int vtx)
+    {
+        if (par[vtx] == vtx)
+            return vtx;
+        return par[vtx] = findPar(par[vtx]);
+    }
+
+    int minCostToSupplyWater(int n, vector<int> &wells, vector<vector<int>> &pipes)
+    {
+        for (int i = 0; i < wells.size(); i++)
+        {
+            pipes.push_back({0, i + 1, wells[i]});
+            par.push_back(i);
+        }
+        par.push_back(wells.size());
+
+        sort(pipes.begin(), pipes.end(), [](vector<int>& a, vector<int>& b){
+            return a[2] < b[2];
+        });        
+
+        int cost = 0;
+        for (vector<int> &p: pipes)
+        {
+            int p1 = findPar(p[0]);
+            int p2 = findPar(p[1]);
+
+            if (p1 != p2)
+            {
+                cost += p[2];
+                par[p1] = p2;
+            }
+        }
+        return cost;
+    }
+};
+
+//Hacker earth: https://www.hackerearth.com/practice/algorithms/graphs/minimum-spanning-tree/practice-problems/algorithm/mr-president/
+
+#define lli long long int
+vector<int> par;
+
+int mrPresident()
+{
+	lli n, m, k;
+    // cities, roads, budget
+	cin >> n >> m >> k;
+
+	vector<vector<int>> graph, kruskalGraph;
+    // that's how we make a graph here
+	while (m--) // for all roads
+	{
+		int u, v, w;
+        cin >> u >> v >> w;
+
+        vector<int> ar = {u, v, w};
+        graph.push_back(ar);
+        // or graph.push_back({u, v, w});
+	}
+
+    // graph is sorted now according to weights in ascending order
+    sort(graph.begin(), graph.end(), [](vector<int>& a, vector<int>& b){
+        return a[2] < b[2];
+    });
+
+    // declare every CITY as self parent 
+    for (int i = 0; i <= n; i++)
+    {
+        par.push_back(i);
+    }
+
+    // now start UNION FIND method
+    lli MSTweightCount = 0;
+    for (vector<int> g: graph)
+    {
+        // asked for parents
+        int p1 = findPar(g[0]);
+        int p2 = findPar(g[1]);
+
+        if (p1 != p2)
+        {
+            par[p1] = p2;   // random (maybe it will make it slow)
+            kruskalGraph.push_back(g); // making a MST (without cycle and mini weight)
+            MSTweightCount += g[2];
+        }
+    }
+
+    // till here we have made a MST , if it satisfies the question the we return it otherwise we will make a super road
+
+    int componentCount = 0; // always check for GCC
+    for (int i = 1; i <= n; i++)    // bcz city count is stared from 1 in question (constraints)
+        if (par[i] == i && ++componentCount > 1)
+            return -1;
+    
+    int superRoad = 0;
+    // started from end bcz road with highest weight is on last dur to sort
+    for (int i = kruskalGraph.size() - 1; i >= 0; i--)
+    {
+        if (MSTweightCount <= k)
+            break;
+        
+        MSTweightCount = MSTweightCount - kruskalGraph[i][2] + 1;
+        superRoad++;
+    }
+    return MSTweightCount <= k ? superRoad : -1;
+    // this check is for the condition if
+    // all roads are converted to superRoad and still it's cost is not less than k
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
