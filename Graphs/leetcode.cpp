@@ -994,7 +994,93 @@ int mrPresident()
     // all roads are converted to superRoad and still it's cost is not less than k
 }
 
+//Hackerrank: https://www.hackerrank.com/challenges/journey-to-the-moon/problem
+// journey to the moon using unionFind method
 
+lli journeyToTheMoon_unionFind()
+{
+    int n , p;
+    cin >> n >> p;
+
+    for (int i = 0; i < n; i++)
+        par.push_back(i);
+
+    while (p-- > 0)
+    {
+        int u, v;
+        cin >> u >> v;
+
+        int p1 = findPar(u);
+        int p2 = findPar(v);
+        
+        par[p1] = min(p1, p2);
+        par[p2] = min(p1, p2);
+    }
+
+    vector<lli> countrySize(n, 0);
+
+    int worldPopulation = n;
+    for (int i = 0; i < n; i++)
+    {
+        countrySize[findPar(i)]++;  // this will give us the size of all countries
+    }
+
+    lli ans = 0;
+    for (int i = 0; i < n; i++)
+    {
+        if (par[i] == i)
+        {
+            ans += countrySize[i] * (worldPopulation - countrySize[i]);
+            worldPopulation -= countrySize[i];
+        }
+    }
+    return ans;
+}
+
+// journey to the moon using DFS method
+
+lli dfs_algo(vector<vector<int>>& graph, int src, vector<bool> &vis)
+{
+    vis[src] = true;
+    int count = 0;
+    for (int e: graph[src])
+        if (!vis[e])
+            count += dfs_algo(graph, e, vis);
+    return count + 1;
+}
+
+lli journeyToTheMoon_dfs()
+{
+    int n, p;
+    cin >> n >> p;
+    // here we have to make a graph
+    vector<vector<int>> graph(n, vector<int>());
+    while (p-- > 0)
+    {
+        int u, v;
+        cin >> u >> v;
+
+        graph[u].push_back(v);
+        graph[v].push_back(u);
+    }
+
+    vector<bool> vis(n, 0);
+    vector<lli> countrySize;
+
+    int worldPopulation = n;
+    lli ans = 0;
+
+    for (int i = 0; i < n; i++)
+        if (!vis[i])
+            countrySize.push_back(dfs_algo(graph, i, vis));
+    
+    for (int ele: countrySize)
+    {
+        ans += ele * (worldPopulation - ele);
+        worldPopulation -= ele;
+    }
+    return ans;
+}
 
 
 

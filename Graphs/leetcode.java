@@ -188,3 +188,54 @@ class Solution4 {
     }
 
 }
+
+// leetcode 547. ========================================
+
+class Solution5 {
+    int findPar(int[] par, int vtx) {
+        if (par[vtx] == vtx)
+            return vtx;
+        return par[vtx] = findPar(par, par[vtx]);
+    }
+
+    void mergeSet(int p1, int p2, int[] setSize, int[] par) {
+        if (setSize[p1] < setSize[p2]) {
+            par[p1] = p2;
+            setSize[p2] += setSize[p1];
+        } else {
+            par[p2] = p1;
+            setSize[p1] += setSize[p2];
+        }
+    }
+
+    public int findCircleNum(int[][] arr) {
+        int n = arr.length;
+        if (n == 0)
+            return 0;
+
+        int[] par = new int[n];
+        int[] setSize = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            par[i] = i;
+        }
+        Arrays.fill(setSize, 1);
+
+        int count = n;
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                if (arr[i][j] != 0 && i != j) {
+                    int p1 = findPar(par, i);
+                    int p2 = findPar(par, j);
+
+                    if (p1 != p2) {
+                        mergeSet(p1, p2, setSize, par);
+                        count--;
+                    }
+                }
+            }
+        }
+        return count;
+    }
+}
+
