@@ -902,12 +902,12 @@ public:
         }
         par.push_back(wells.size());
 
-        sort(pipes.begin(), pipes.end(), [](vector<int>& a, vector<int>& b){
+        sort(pipes.begin(), pipes.end(), [](vector<int> &a, vector<int> &b) {
             return a[2] < b[2];
-        });        
+        });
 
         int cost = 0;
-        for (vector<int> &p: pipes)
+        for (vector<int> &p : pipes)
         {
             int p1 = findPar(p[0]);
             int p2 = findPar(p[1]);
@@ -929,28 +929,28 @@ vector<int> par;
 
 int mrPresident()
 {
-	lli n, m, k;
+    lli n, m, k;
     // cities, roads, budget
-	cin >> n >> m >> k;
+    cin >> n >> m >> k;
 
-	vector<vector<int>> graph, kruskalGraph;
+    vector<vector<int>> graph, kruskalGraph;
     // that's how we make a graph here
-	while (m--) // for all roads
-	{
-		int u, v, w;
+    while (m--) // for all roads
+    {
+        int u, v, w;
         cin >> u >> v >> w;
 
         vector<int> ar = {u, v, w};
         graph.push_back(ar);
         // or graph.push_back({u, v, w});
-	}
+    }
 
     // graph is sorted now according to weights in ascending order
-    sort(graph.begin(), graph.end(), [](vector<int>& a, vector<int>& b){
+    sort(graph.begin(), graph.end(), [](vector<int> &a, vector<int> &b) {
         return a[2] < b[2];
     });
 
-    // declare every CITY as self parent 
+    // declare every CITY as self parent
     for (int i = 0; i <= n; i++)
     {
         par.push_back(i);
@@ -958,7 +958,7 @@ int mrPresident()
 
     // now start UNION FIND method
     lli MSTweightCount = 0;
-    for (vector<int> g: graph)
+    for (vector<int> g : graph)
     {
         // asked for parents
         int p1 = findPar(g[0]);
@@ -966,7 +966,7 @@ int mrPresident()
 
         if (p1 != p2)
         {
-            par[p1] = p2;   // random (maybe it will make it slow)
+            par[p1] = p2;              // random (maybe it will make it slow)
             kruskalGraph.push_back(g); // making a MST (without cycle and mini weight)
             MSTweightCount += g[2];
         }
@@ -974,18 +974,18 @@ int mrPresident()
 
     // till here we have made a MST , if it satisfies the question the we return it otherwise we will make a super road
 
-    int componentCount = 0; // always check for GCC
-    for (int i = 1; i <= n; i++)    // bcz city count is stared from 1 in question (constraints)
+    int componentCount = 0;      // always check for GCC
+    for (int i = 1; i <= n; i++) // bcz city count is stared from 1 in question (constraints)
         if (par[i] == i && ++componentCount > 1)
             return -1;
-    
+
     int superRoad = 0;
     // started from end bcz road with highest weight is on last dur to sort
     for (int i = kruskalGraph.size() - 1; i >= 0; i--)
     {
         if (MSTweightCount <= k)
             break;
-        
+
         MSTweightCount = MSTweightCount - kruskalGraph[i][2] + 1;
         superRoad++;
     }
@@ -999,7 +999,7 @@ int mrPresident()
 
 lli journeyToTheMoon_unionFind()
 {
-    int n , p;
+    int n, p;
     cin >> n >> p;
 
     for (int i = 0; i < n; i++)
@@ -1012,7 +1012,7 @@ lli journeyToTheMoon_unionFind()
 
         int p1 = findPar(u);
         int p2 = findPar(v);
-        
+
         par[p1] = min(p1, p2);
         par[p2] = min(p1, p2);
     }
@@ -1022,7 +1022,7 @@ lli journeyToTheMoon_unionFind()
     int worldPopulation = n;
     for (int i = 0; i < n; i++)
     {
-        countrySize[findPar(i)]++;  // this will give us the size of all countries
+        countrySize[findPar(i)]++; // this will give us the size of all countries
     }
 
     lli ans = 0;
@@ -1039,11 +1039,11 @@ lli journeyToTheMoon_unionFind()
 
 // journey to the moon using DFS method
 
-lli dfs_algo(vector<vector<int>>& graph, int src, vector<bool> &vis)
+lli dfs_algo(vector<vector<int>> &graph, int src, vector<bool> &vis)
 {
     vis[src] = true;
     int count = 0;
-    for (int e: graph[src])
+    for (int e : graph[src])
         if (!vis[e])
             count += dfs_algo(graph, e, vis);
     return count + 1;
@@ -1073,31 +1073,11 @@ lli journeyToTheMoon_dfs()
     for (int i = 0; i < n; i++)
         if (!vis[i])
             countrySize.push_back(dfs_algo(graph, i, vis));
-    
-    for (int ele: countrySize)
+
+    for (int ele : countrySize)
     {
         ans += ele * (worldPopulation - ele);
         worldPopulation -= ele;
     }
     return ans;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
