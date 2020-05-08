@@ -12,7 +12,7 @@ public class graph {
         }
     }
 
-    public static int N = 5;
+    public static int N = 8;
     // public static ArrayList<Edge>[] graph; // array of arraylist
     public static ArrayList<Integer>[] graph;
 
@@ -59,6 +59,8 @@ public class graph {
         display();
     }
 
+    // * topological sort using DFS
+
     public static void topoSort_(int src, boolean[] vis, ArrayList<Integer> ans) {
         vis[src] = true;
         for (Integer e : graph[src]) {
@@ -86,7 +88,10 @@ public class graph {
         System.out.println();
     }
 
-    public static void khansAlgo_topoInBFS() {
+    // * topological sort using BFS
+    // * also called as Kahns Algorithum
+
+    public static void kahnsAlgo_topoInBFS() {
         int[] indegree = new int[N];
         for (int i = 0; i < N; i++) {
             for (Integer e : graph[i]) {
@@ -107,6 +112,8 @@ public class graph {
             int size = que.size();
             while (size-- > 0) {
                 int rvtx = que.removeFirst();
+                // only that element is added whose indegree is Zero
+                // bcz queue has only those elements whos indegree is Zero
                 ans.add(rvtx);
 
                 for (int e : graph[rvtx]) {
@@ -123,66 +130,93 @@ public class graph {
             System.out.println(ans);
     }
 
-    // //* SCC
-    // public static void SCC_DFS(int src, ArrayList<Integer> vis,
-    // vector<vector<int>>& )
-    // {
-    // vis[src] = true;
-    // for (int e: newGraph[src])
-    // {
-    // if (!vis[e])
-    // {
-    // count += SCC_DFS(e, vis, newGraph, ans);
-    // }
-    // }
-    // }
+    // topological sort when cycle can be detected too
+    public static void topologicalSortCycle() {
+        int[] vis = new int[N];
+        ArrayList<Integer> ans = new ArrayList<>();
 
-    // public static void stronglyConnectedComponents()
-    // {
-    // boolean[] vis = new boolean[N];
-    // ArrayList<Integer> ans = new ArrayList<>();
+        boolean res = false;
 
-    // for (int i = 0; i < N; i++)
-    // {
-    // if (!vis[i])
-    // {
-    // topoSort_(i, vis, ans);
-    // }
-    // }
+        for (int i = 0; i < N && !res; i++) // so that we can reach each and every node even if it not connected anyone
+        {
+            if (vis[i] == 0) {
+                res = res || topologicalSortCycle_(vis, ans, i);
+            }
+        }
 
-    // ArrayList<Integer>[] newGraph = new ArrayList[N];
-    // for (int i = 0; i < N; i++)
-    // {
-    // newGraph[i] = new ArrayList<>();
-    // }
+        if (!res)
+            for (int i = ans.size() - 1; i >= 0; i--)
+                System.out.println(ans.get(i) + " ");
+        else
+            System.out.println("cycle");
+    }
 
-    // for (int i = 0; i < N; i++)
-    // {
-    // for (int ele : graph[i])
-    // {
-    // newGraph[ele].add(i);
-    // }
-    // }
+    public static boolean topologicalSortCycle_(int[] vis, ArrayList<Integer> ans, int src) // faith: it will detect
+                                                                                            // cycle
+    {
+        if (vis[src] == 1) // cycle detected
+            return true;
+        if (vis[src] == 2) // already visited
+            return false;
 
-    // vis = new Boolean[N];
+        boolean res = false;
+        vis[src] = 1;
+        for (int e : graph[src])
+            res = res || topologicalSortCycle_(vis, ans, e);
 
-    // // taversing opposite due to stack
-    // for (int i = ans.size() - 1; i >= 0; i--)
-    // {
-    // if (!vis[ans.get(i)])
-    // {
-    // ArrayList<Integer> ans_ = new ArrayList<>();
-    // System.out.println(SCC_DFS(ans.get(i), newGraph, vis, ans_));
-    // System.out.println(ans_);
-    // }
-    // }
-    // }
+        vis[src] = 2;
+        ans.add(src);
+        return res;
+    }
+
+    // * Strongly Connected Components
+    public static int DFS_SCC(int src, ArrayList<Integer>[] ngraph, boolean[] vis, ArrayList<Integer> ans) {
+        vis[src] = true;
+        int count = 0;
+        for (int e : ngraph[src]) {
+            if (!vis[e]) {
+                count += DFS_SCC(e, ngraph, vis, ans);
+            }
+        }
+        ans.add(src);
+        return count + 1;
+    }
+
+    public static void SCC() {
+        boolean[] vis = new boolean[N];
+        ArrayList<Integer> ans = new ArrayList<>();
+
+        for (int i = 0; i < N; i++) {
+            if (!vis[i])
+                topoSort_(i, vis, ans);
+        }
+
+        ArrayList<Integer>[] ngraph = new ArrayList[N];
+        for (int i = 0; i < N; i++)
+            ngraph[i] = new ArrayList<>();
+
+        for (int i = 0; i < N; i++) {
+            for (int ele : graph[i]) {
+                ngraph[ele].add(i);
+            }
+        }
+
+        vis = new boolean[N];
+
+        for (int i = ans.size() - 1; i >= 0; i--) {
+            if (!vis[ans.get(i)]) {
+                ArrayList<Integer> ans_ = new ArrayList<>();
+                System.out.print(DFS_SCC(ans.get(i), ngraph, vis, ans_));
+                System.out.println(ans_);
+            }
+        }
+    }
 
     public static void solve() {
         constructGraph();
         // topoSort();
-        // khansAlgo_topoInBFS();
-        // stronglyConnectedComponents();
+        // kahnsAlgo_topoInBFS();
+        SCC();
     }
 
     public static void main(String[] args) {
