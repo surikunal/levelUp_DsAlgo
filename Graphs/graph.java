@@ -1,10 +1,35 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 
 public class graph {
+    public static void main(String[] args) {
+        solve();
+    }
+
+    public static int N = 7;
+    public static ArrayList<Edge>[] graph;
+
+    public static void addEdge(ArrayList<Edge>[] gp, int u, int v, int w) {
+        gp[u].add(new Edge(v, w));
+        gp[v].add(new Edge(u, w));
+    }
+
+    public static void display(ArrayList<Edge>[] gp) {
+        for (int i = 0; i < gp.length; i++) {
+            System.out.print(i + " -> ");
+            for (Edge e : gp[i]) {
+                System.out.print("(" + e.v + ", " + e.w + ")");
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
     public static class Edge {
-        int w = 0;
         int v = 0;
+        int w = 0;
 
         Edge(int v, int w) {
             this.v = v;
@@ -12,214 +37,198 @@ public class graph {
         }
     }
 
-    public static int N = 8;
-    // public static ArrayList<Edge>[] graph; // array of arraylist
-    public static ArrayList<Integer>[] graph;
+    // * .BFS. ===================================================
 
-    public static void addEdge(ArrayList<Integer>[] graph, int u, int v) {
-        graph[u].add(v); // inetger type
-        // graph[v].add(new Edge(u, w));
-    }
+    static class pair {
+        int vtx;
+        String psf;
+        int level = 0;
 
-    public static void display() {
-        for (int i = 0; i < graph.length; i++) {
-            System.out.print(i + " -> ");
-            for (Integer e : graph[i]) {
-                System.out.print("(" + e + ") ");
-            }
-            System.out.println();
+        pair(int vtx, String psf) {
+            this.vtx = vtx;
+            this.psf = psf;
+        }
+
+        pair(int vtx, String psf, int level) {
+            this.vtx = vtx;
+            this.psf = psf;
+            this.level = level;
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public static void constructGraph() {
-        graph = new ArrayList[N];
+    public static void BFS(int src) {
+        boolean[] vis = new boolean[N];
+
+        // we can also do
+        // * LinkedList<int[]> que = new LinkedList<>();
+        // * que.addLast(new int[]{1,0});
+
+        LinkedList<pair> que = new LinkedList<>();
+        que.addLast(new pair(src, src + ""));
+        que.addLast(null);
+
+        int level = 0;
+        while (que.size() != 0) {
+            
+        }
+    }
+
+    // * kruskal =================================================
+
+    public static int[] par;
+    public static int[] setSize;
+
+    public static int findPar(int vtx) {
+        if (par[vtx] == vtx) {
+            return vtx;
+        }
+        return par[vtx] = findPar(par[vtx]);
+    }
+
+    public static void mergeSet(int p1, int p2) {
+        if (setSize[p1] > setSize[p2]) {
+            par[p2] = p1;
+            setSize[p1] += setSize[p2];
+        } else {
+            par[p1] = p2;
+            setSize[p2] = setSize[p1];
+        }
+    }
+
+    public static void kruskal(int[][] arr) {
+        // arr -> [u, v, w];
+        ArrayList<Edge>[] kGraph = new ArrayList[N];
         for (int i = 0; i < N; i++) {
-            graph[i] = new ArrayList<Integer>();
+            kGraph[i] = new ArrayList<Edge>();
         }
 
-        // addEdge(graph, 0, 1, 10);
-        // addEdge(graph, 0, 3, 10);
-        // addEdge(graph, 1, 2, 10);
-        // addEdge(graph, 2, 3, 40);
-        // addEdge(graph, 3, 4, 2);
-        // addEdge(graph, 4, 5, 2);
-        // addEdge(graph, 4, 6, 3);
-        // addEdge(graph, 5, 6, 8);
+        Arrays.sort(arr, (int[] a, int[] b) -> { // a : this, b : other
+            return a[2] - b[2]; // this - other :: default is increasing
+            // return b[2] - a[2]; // decreasing
+        });
 
-        graph[7].add(5);
-        graph[7].add(6);
-        graph[5].add(4);
-        graph[5].add(2);
-        graph[6].add(4);
-        graph[6].add(3);
-        graph[2].add(1);
-        graph[3].add(1);
-        graph[1].add(0);
-        display();
-    }
-
-    // * topological sort using DFS
-
-    public static void topoSort_(int src, boolean[] vis, ArrayList<Integer> ans) {
-        vis[src] = true;
-        for (Integer e : graph[src]) {
-            if (!vis[e]) {
-                topoSort_(e, vis, ans);
+        for (int[] ar : arr) {
+            int p1 = findPar(ar[0]);
+            int p2 = findPar(ar[1]);
+            if (p1 != p2) {
+                mergeSet(p1, p2);
+                addEdge(kGraph, ar[0], ar[1], ar[2]);
             }
         }
-
-        ans.add(src);
+        display(kGraph);
     }
 
-    public static void topoSort() {
+    // * dijistra algorithum ==========================================
+
+    static class pair_ {
+        int src;
+        int par;
+        int w;
+        int wsf;
+
+        pair_(int src, int par, int w, int wsf) {
+            this.src = src;
+            this.par = par;
+            this.w = w;
+            this.wsf = wsf;
+        }
+    }
+
+    public static void dijikstraAlgo(int src) {
+        ArrayList<Edge>[] dijikstraGraph = new ArrayList[N];
+        for (int i = 0; i < N; i++) {
+            dijikstraGraph[i] = new ArrayList<Edge>();
+        }
+
+        PriorityQueue<pair_> pq = new PriorityQueue<>((pair_ a, pair_ b) -> {
+            return a.wsf - b.wsf; // deault -> min PQ......(this - other)
+            // return b.wsf - a.wsf; // max PQ
+        });
 
         boolean[] vis = new boolean[N];
-        ArrayList<Integer> ans = new ArrayList<>();
-        for (int i = 0; i < N; i++) {
-            if (!vis[i]) {
-                topoSort_(i, vis, ans);
-            }
-        }
+        pq.add(new pair_(src, -1, 0, 0));
 
-        for (int i = ans.size() - 1; i >= 0; i--) {
-            System.out.print(ans.get(i) + " ");
-        }
-        System.out.println();
-    }
-
-    // * topological sort using BFS
-    // * also called as Kahns Algorithum
-
-    public static void kahnsAlgo_topoInBFS() {
-        int[] indegree = new int[N];
-        for (int i = 0; i < N; i++) {
-            for (Integer e : graph[i]) {
-                indegree[e]++;
-            }
-        }
-
-        LinkedList<Integer> que = new LinkedList<>();
-        for (int i = 0; i < N; i++) {
-            if (indegree[i] == 0) {
-                que.addLast(i);
-            }
-        }
-
-        // BFS
-        ArrayList<Integer> ans = new ArrayList<>();
-        while (que.size() != 0) {
-            int size = que.size();
+        while (pq.size() != 0) {
+            int size = pq.size();
             while (size-- > 0) {
-                int rvtx = que.removeFirst();
-                // only that element is added whose indegree is Zero
-                // bcz queue has only those elements whos indegree is Zero
-                ans.add(rvtx);
+                pair_ rvtx = pq.poll();
 
-                for (int e : graph[rvtx]) {
-                    if (--indegree[e] == 0) {
-                        que.addLast(e);
+                if (vis[rvtx.src]) // cycle
+                    continue;
+
+                if (rvtx.par != -1) // parent exist means make a edge
+                    addEdge(dijikstraGraph, rvtx.src, rvtx.par, rvtx.w);
+
+                vis[rvtx.src] = true;
+                for (Edge e : graph[rvtx.src]) {
+                    if (!vis[e.v]) {
+                        pq.add(new pair_(e.v, rvtx.src, e.w, rvtx.wsf + e.w));
                     }
                 }
             }
         }
-
-        if (ans.size() != 0)
-            System.out.println("Cycle");
-        else
-            System.out.println(ans);
+        display(dijikstraGraph);
     }
 
-    // topological sort when cycle can be detected too
-    public static void topologicalSortCycle() {
-        int[] vis = new int[N];
-        ArrayList<Integer> ans = new ArrayList<>();
-
-        boolean res = false;
-
-        for (int i = 0; i < N && !res; i++) // so that we can reach each and every node even if it not connected anyone
-        {
-            if (vis[i] == 0) {
-                res = res || topologicalSortCycle_(vis, ans, i);
-            }
+    // * prims algorithum. ======================================
+    public static void primsAlgo(int src) {
+        ArrayList<Edge>[] primsGraph = new ArrayList[N];
+        for (int i = 0; i < N; i++) {
+            primsGraph[i] = new ArrayList<Edge>();
         }
 
-        if (!res)
-            for (int i = ans.size() - 1; i >= 0; i--)
-                System.out.println(ans.get(i) + " ");
-        else
-            System.out.println("cycle");
-    }
+        PriorityQueue<pair_> pq = new PriorityQueue<>((pair_ a, pair_ b) -> {
+            return a.w - b.w; // deault -> min PQ......(this - other)
+            // return b.wsf - a.wsf; // max PQ
+        });
 
-    public static boolean topologicalSortCycle_(int[] vis, ArrayList<Integer> ans, int src) // faith: it will detect
-                                                                                            // cycle
-    {
-        if (vis[src] == 1) // cycle detected
-            return true;
-        if (vis[src] == 2) // already visited
-            return false;
-
-        boolean res = false;
-        vis[src] = 1;
-        for (int e : graph[src])
-            res = res || topologicalSortCycle_(vis, ans, e);
-
-        vis[src] = 2;
-        ans.add(src);
-        return res;
-    }
-
-    // * Strongly Connected Components
-    public static int DFS_SCC(int src, ArrayList<Integer>[] ngraph, boolean[] vis, ArrayList<Integer> ans) {
-        vis[src] = true;
-        int count = 0;
-        for (int e : ngraph[src]) {
-            if (!vis[e]) {
-                count += DFS_SCC(e, ngraph, vis, ans);
-            }
-        }
-        ans.add(src);
-        return count + 1;
-    }
-
-    public static void SCC() {
         boolean[] vis = new boolean[N];
-        ArrayList<Integer> ans = new ArrayList<>();
+        pq.add(new pair_(src, -1, 0, 0));
 
-        for (int i = 0; i < N; i++) {
-            if (!vis[i])
-                topoSort_(i, vis, ans);
-        }
+        while (pq.size() != 0) {
+            int size = pq.size();
+            while (size-- > 0) {
+                pair_ rvtx = pq.poll();
 
-        ArrayList<Integer>[] ngraph = new ArrayList[N];
-        for (int i = 0; i < N; i++)
-            ngraph[i] = new ArrayList<>();
+                if (vis[rvtx.src]) // cycle
+                    continue;
 
-        for (int i = 0; i < N; i++) {
-            for (int ele : graph[i]) {
-                ngraph[ele].add(i);
+                if (rvtx.par != -1) // parent exist means make a edge
+                    addEdge(primsGraph, rvtx.src, rvtx.par, rvtx.w);
+
+                vis[rvtx.src] = true;
+                for (Edge e : graph[rvtx.src]) {
+                    if (!vis[e.v]) {
+                        pq.add(new pair_(e.v, rvtx.src, e.w, rvtx.wsf + e.w));
+                    }
+                }
             }
         }
+        display(primsGraph);
+    }
 
-        vis = new boolean[N];
-
-        for (int i = ans.size() - 1; i >= 0; i--) {
-            if (!vis[ans.get(i)]) {
-                ArrayList<Integer> ans_ = new ArrayList<>();
-                System.out.print(DFS_SCC(ans.get(i), ngraph, vis, ans_));
-                System.out.println(ans_);
-            }
+    public static void constructGraph() {
+        graph = new ArrayList[N];
+        for (int i = 0; i < N; i++) {
+            graph[i] = new ArrayList<Edge>();
         }
+
+        addEdge(graph, 0, 1, 20);
+        addEdge(graph, 0, 3, 10);
+        addEdge(graph, 1, 2, 10);
+        addEdge(graph, 2, 3, 40);
+        addEdge(graph, 3, 4, 2);
+        addEdge(graph, 4, 5, 2);
+        addEdge(graph, 4, 6, 3);
+        addEdge(graph, 5, 6, 8);
+
+        display(graph);
     }
 
     public static void solve() {
         constructGraph();
-        // topoSort();
-        // kahnsAlgo_topoInBFS();
-        SCC();
-    }
-
-    public static void main(String[] args) {
-        solve();
+        // kruskal();
+        // dijikstraAlgo(2);
+        // primsAlgo(2);
     }
 }
