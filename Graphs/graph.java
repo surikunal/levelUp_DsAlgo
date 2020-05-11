@@ -58,7 +58,7 @@ public class graph {
 
     public static void BFS(int src) {
         boolean[] vis = new boolean[N];
-
+        int dest = 6;
         // we can also do
         // * LinkedList<int[]> que = new LinkedList<>();
         // * que.addLast(new int[]{1,0});
@@ -69,7 +69,61 @@ public class graph {
 
         int level = 0;
         while (que.size() != 0) {
-            
+            pair rvtx = que.removeFirst();
+
+            if (vis[rvtx.vtx])
+            {
+                System.out.println("Cycle at " + rvtx.psf);
+                continue;
+            }
+
+            if (rvtx.vtx == dest)
+            {
+                System.out.println("destination " + rvtx.psf + " -> " + level);
+            }
+
+            vis[rvtx.vtx] = true;
+            for (Edge e: graph[rvtx.vtx]) {
+                if (!vis[e.v]) {
+                    que.addLast(new pair(e.v, rvtx.psf + e.v));
+                }
+            }
+
+            if (que.getFirst() == null)
+            {
+                level++;
+                que.removeFirst();
+                que.addLast(null);
+            }
+        }
+    }
+
+    public static void BFS_2(int src) {
+        boolean[] vis = new boolean[N];
+        LinkedList<pair> que = new LinkedList<>();
+        que.addLast(new pair(src, src + "", 0));
+        int dest = 6;
+        
+        while (que.size() != 0) {
+            pair rvtx = que.removeFirst();
+
+            if (vis[rvtx.vtx])
+            {
+                System.out.println("Cycle at : " + rvtx.psf);
+                continue;
+            }
+
+            if (rvtx.vtx == dest)
+            System.out.println("Destination : " + rvtx.psf + " -> " + rvtx.level);
+
+            vis[rvtx.vtx] = true;
+            for (Edge e: graph[rvtx.vtx])
+            {
+                if (!vis[e.v])
+                {
+                    que.addLast(new pair(e.v, rvtx.psf + e.v, rvtx.level + 1));
+                }
+            }
         }
     }
 
@@ -227,6 +281,8 @@ public class graph {
 
     public static void solve() {
         constructGraph();
+        // BFS(0);
+        // BFS_2(0);
         // kruskal();
         // dijikstraAlgo(2);
         // primsAlgo(2);

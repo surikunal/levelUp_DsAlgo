@@ -540,18 +540,95 @@ void topologicalSort()
     }
 }
 
+// digikstra ===========================================
+
+class dpair
+{
+public:
+    int src;
+    int par;
+    int w;
+    int wsf;
+
+    dpair(int age, int wt)
+    {
+        this->src = src;
+        this->par = par;
+        this->w = w;
+        this->wsf = wsf;
+    }
+
+    /*
+    * bool operator<(pair_ const &p1) const
+    *{
+    *    return p1.age > this->age;  // max
+    *}
+    *
+    */
+};
+
+struct digikstraComparator
+{
+public:
+    bool operator()(dpair &p1, dpair &p2)
+    {
+        return p1.wsf > p2.wsf;
+    }
+};
+
+void dijikstraAlgo(int src)
+{    
+    vector<vector<Edge>> dijikstraGraph(N, vector<Edge>());
+    priority_queue<dpair, vector<dpair>, digikstraComparator> pq;
+
+    vector<bool> vis(N, false);
+    pq.push(dpair(src, -1, 0, 0));
+
+    while (pq.size() != 0)
+    {
+        int size = pq.size();
+        while (size-- > 0)
+        {
+            dpair rvtx = pq.top();
+            pq.pop();
+
+            if (vis[rvtx.src])
+                continue; // cycle
+
+            if (rvtx.par != -1)
+            {
+                addEdge(dijikstraGraph, rvtx.src, rvtx.par, rvtx.w);
+            }
+
+            vis[rvtx.src] = true;
+            for (Edge e : graph[rvtx.src])
+            {
+                if (!vis[e.v])
+                {
+                    pq.push(dpair(e.v, rvtx.src, e.w, rvtx.wsf + e.w));
+                }
+            }
+        }
+    }
+    display(dijikstraGraph);
+}
+
 void set2()
 {
     vector<int> visInt(N, false);
     vector<bool> visBool(N, false);
-    bfs(0, visBool);
-    bfs1(0, visInt);
-    bfs2(0, visBool);
-    bfs3(0, visBool); // when cycle is not a concern
+    // bfs(0, visBool);
+    // bfs1(0, visInt);
+    // bfs2(0, visBool);
+    // bfs3(0, visBool); // when cycle is not a concern
 
-    isBipatite_BFS();
+    // isBipatite_BFS();
 
-    topologicalSort();  //* check this function in java too
+    // topologicalSort();  //* check this function in java too
+
+    //* Strongly connected Components is in JAVA file
+
+    dijikstraAlgo(0);
 }
 
 void solve()
