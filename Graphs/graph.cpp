@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <queue>
+#include <algorithm>
 
 #define vi vector<int>
 #define vb vector<bool>
@@ -26,7 +27,7 @@ public:
 
 int N = 7;
 vector<vector<Edge>> graph(N, vector<Edge>());
-// vecto<vector<pair<int, int>>> graph(N, vector<pair<int, int>>());
+// vector<vector<pair<int, int>>> NumGraph(N, vector<pair<int, int>>());
 
 void display(vector<vector<Edge>> &gp)
 {
@@ -84,7 +85,7 @@ void addEdge(vector<vector<Edge>> &gp, int u, int v, int w)
     //     return;
 
     gp[u].push_back(Edge(v, w)); // but if we make it on heap then we have to write = new Edge(v, w)
-    // gp[v].push_back(Edge(u, w));     // comment for toposort
+    gp[v].push_back(Edge(u, w)); // comment for toposort
 }
 
 void constructGraph()
@@ -540,9 +541,61 @@ void topologicalSort()
     }
 }
 
+//. kruskal algorithum =================================
+
+vector<int> par;
+vector<int> setSize;
+
+int findPar(int vtx)
+{
+    if (par[vtx] == vtx)
+        return vtx;
+    return par[vtx] = findPar(par[vtx]);
+}
+
+void mergeSet(int p1, int p2)
+{
+    if (setSize[p1] > setSize[p2])
+    {
+        par[p2] = p1;
+        setSize[p1] += setSize[p2];
+    }
+    else
+    {
+        par[p1] = p2;
+        setSize[p2] += setSize[p1];
+    }
+}
+
+void kruskalAlgo(vector<vector<int>> &arr)
+{
+    vector<vector<Edge>> kruskalGraph(arr.size(), vector<Edge>());
+    // making a new graph (but it is not compulsory in kruskal algo)
+
+    sort(arr.begin(), arr.end(), [](vector<int> &a, vector<int> &b) {
+        return a[2] < b[2]; // this - other in java but replace '-' with '<' in cpp
+        //*  increasing by default
+    });
+
+    for (vector<int> &ar : arr)
+    {
+        int u = ar[0];
+        int v = ar[1];
+        int p1 = findPar(u);
+        int p2 = findPar(v);
+
+        if (p1 != p2)
+        {
+            mergeSet(p1, p2);
+            addEdge(kruskalGraph, u, v, ar[2]);
+        }
+    }
+    display(kruskalGraph);
+}
+
 // digikstra ===========================================
 
-class dpair
+class pair_
 {
 public:
     int src;
@@ -550,7 +603,7 @@ public:
     int w;
     int wsf;
 
-    dpair(int age, int wt)
+    pair_(int src, int par, int w, int wsf)
     {
         this->src = src;
         this->par = par;
@@ -567,29 +620,30 @@ public:
     */
 };
 
-struct digikstraComparator
+struct dijikstraComparator
 {
 public:
-    bool operator()(dpair &p1, dpair &p2)
+    bool operator()(pair_ &p1, pair_ &p2)
     {
-        return p1.wsf > p2.wsf;
+        return p1.wsf > p2.wsf; // default is min PQ
+        // return p2.wsf > p1.wsf;  // max PQ
     }
 };
 
 void dijikstraAlgo(int src)
-{    
+{
     vector<vector<Edge>> dijikstraGraph(N, vector<Edge>());
-    priority_queue<dpair, vector<dpair>, digikstraComparator> pq;
+    priority_queue<pair_, vector<pair_>, dijikstraComparator> pq; // by default minPQ
 
     vector<bool> vis(N, false);
-    pq.push(dpair(src, -1, 0, 0));
+    pq.push(pair_(src, -1, 0, 0));
 
     while (pq.size() != 0)
     {
         int size = pq.size();
         while (size-- > 0)
         {
-            dpair rvtx = pq.top();
+            pair_ rvtx = pq.top();
             pq.pop();
 
             if (vis[rvtx.src])
@@ -605,13 +659,64 @@ void dijikstraAlgo(int src)
             {
                 if (!vis[e.v])
                 {
-                    pq.push(dpair(e.v, rvtx.src, e.w, rvtx.wsf + e.w));
+                    pq.push(pair_(e.v, rvtx.src, e.w, rvtx.wsf + e.w));
                 }
             }
         }
     }
     display(dijikstraGraph);
 }
+
+// prims algorithum. =========================================
+
+struct primsComparator
+{
+public:
+    bool operator()(pair_ &p1, pair_ &p2)
+    {
+        return p1.w > p2.w; // default is min PQ
+        // return p2.wsf > p1.wsf;  // max PQ
+    }
+};
+
+void primsAlgo(int src)
+{
+    vector<vector<Edge>> primsGraph(N, vector<Edge>());
+    priority_queue<pair_, vector<pair_>, primsComparator> pq; // by default minPQ
+
+    vector<bool> vis(N, false);
+    pq.push(pair_(src, -1, 0, 0));
+
+    while (pq.size() != 0)
+    {
+        int size = pq.size();
+        while (size-- > 0)
+        {
+            pair_ rvtx = pq.top();
+            pq.pop();
+
+            if (vis[rvtx.src])
+                continue; // cycle
+
+            if (rvtx.par != -1)
+            {
+                addEdge(primsGraph, rvtx.src, rvtx.par, rvtx.w);
+            }
+
+            vis[rvtx.src] = true;
+            for (Edge e : graph[rvtx.src])
+            {
+                if (!vis[e.v])
+                {
+                    pq.push(pair_(e.v, rvtx.src, e.w, rvtx.wsf + e.w));
+                }
+            }
+        }
+    }
+    display(primsGraph);
+}
+
+// basic. ======================================================
 
 void set2()
 {
@@ -628,14 +733,18 @@ void set2()
 
     //* Strongly connected Components is in JAVA file
 
-    dijikstraAlgo(0);
+    // kruskalAlgo(NumGraph);  //?????????????????????
+
+    dijikstraAlgo(6);
+
+    primsAlgo(6);
 }
 
 void solve()
 {
     constructGraph();
     // set1();
-    // set2();
+    set2();
 }
 
 int main(int args, char **argv)
