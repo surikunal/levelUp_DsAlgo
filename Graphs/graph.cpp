@@ -716,6 +716,66 @@ void primsAlgo(int src)
     display(primsGraph);
 }
 
+// bellman ford algorithum. ====================================
+// used to determine negetive cycle. ===========================
+
+// using 2D dp , which is just to show to dry run
+void bellmanFordAlgo(vector<vector<int>> &graph, int src)
+{
+    int INF = 1e8;
+    vector<vector<int>> dp(graph.size(), vector<int>(graph.size() + 1, INF)); // size+1 is for the last iteration which is used to check negetive cycle
+    dp[src][0] = 0;
+    bool isNegetiveCycle = false;
+
+    for (int i = 1; i <= graph.size(); i++) // traversing in coloumns, and starting from 1 bcz 0th index have default values
+    {
+        for (int j = 0; j < graph.size(); j++)
+        {
+            dp[j][i] = dp[j][i - 1]; // copying again and again (useless)
+        }
+
+        for (vector<int> &e : graph)
+        {
+            int u = e[0], v = e[1], w = e[2];
+
+            if (dp[u][i - 1] == INF)
+                continue;
+
+            int temp = dp[v][i];
+            dp[v][i] = min(dp[v][i], dp[v][i - 1] + w);
+
+            if (i == graph.size() && dp[v][i] != temp)
+                isNegetiveCycle = true;
+        }
+    }
+}
+
+//now using 1D dp
+void bellmanFord_1D(vector<vector<int>> &graph, int src)
+{
+    int INF = 1e8;
+    vector<int> dp(graph.size(), INF);
+    dp[src] = 0;
+    bool isNegetiveCycle = false;
+
+    for (int i = 1; i <= graph.size(); i++)
+    {
+        for (vector<int> &e : graph)
+        {
+            int u = e[0], v = e[1], w = e[2];
+            if (u == INF)
+                continue;
+
+            int temp = dp[v];
+
+            dp[v] = min(dp[v], dp[u] + w);
+
+            if (i == graph.size() && dp[v] != temp)
+                isNegetiveCycle = true;
+        }
+    }
+}
+
 // basic. ======================================================
 
 void set2()
