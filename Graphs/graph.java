@@ -71,26 +71,23 @@ public class graph {
         while (que.size() != 0) {
             pair rvtx = que.removeFirst();
 
-            if (vis[rvtx.vtx])
-            {
+            if (vis[rvtx.vtx]) {
                 System.out.println("Cycle at " + rvtx.psf);
                 continue;
             }
 
-            if (rvtx.vtx == dest)
-            {
+            if (rvtx.vtx == dest) {
                 System.out.println("destination " + rvtx.psf + " -> " + level);
             }
 
             vis[rvtx.vtx] = true;
-            for (Edge e: graph[rvtx.vtx]) {
+            for (Edge e : graph[rvtx.vtx]) {
                 if (!vis[e.v]) {
                     que.addLast(new pair(e.v, rvtx.psf + e.v));
                 }
             }
 
-            if (que.getFirst() == null)
-            {
+            if (que.getFirst() == null) {
                 level++;
                 que.removeFirst();
                 que.addLast(null);
@@ -103,24 +100,21 @@ public class graph {
         LinkedList<pair> que = new LinkedList<>();
         que.addLast(new pair(src, src + "", 0));
         int dest = 6;
-        
+
         while (que.size() != 0) {
             pair rvtx = que.removeFirst();
 
-            if (vis[rvtx.vtx])
-            {
+            if (vis[rvtx.vtx]) {
                 System.out.println("Cycle at : " + rvtx.psf);
                 continue;
             }
 
             if (rvtx.vtx == dest)
-            System.out.println("Destination : " + rvtx.psf + " -> " + rvtx.level);
+                System.out.println("Destination : " + rvtx.psf + " -> " + rvtx.level);
 
             vis[rvtx.vtx] = true;
-            for (Edge e: graph[rvtx.vtx])
-            {
-                if (!vis[e.v])
-                {
+            for (Edge e : graph[rvtx.vtx]) {
+                if (!vis[e.v]) {
                     que.addLast(new pair(e.v, rvtx.psf + e.v, rvtx.level + 1));
                 }
             }
@@ -149,6 +143,7 @@ public class graph {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static void kruskal(int[][] arr) {
         // arr -> [u, v, w];
         ArrayList<Edge>[] kGraph = new ArrayList[N];
@@ -188,6 +183,7 @@ public class graph {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static void dijikstraAlgo(int src) {
         ArrayList<Edge>[] dijikstraGraph = new ArrayList[N];
         for (int i = 0; i < N; i++) {
@@ -225,6 +221,7 @@ public class graph {
     }
 
     // * prims algorithum. ======================================
+    @SuppressWarnings("unchecked")
     public static void primsAlgo(int src) {
         ArrayList<Edge>[] primsGraph = new ArrayList[N];
         for (int i = 0; i < N; i++) {
@@ -261,6 +258,7 @@ public class graph {
         display(primsGraph);
     }
 
+    @SuppressWarnings("unchecked")
     public static void constructGraph() {
         graph = new ArrayList[N];
         for (int i = 0; i < N; i++) {

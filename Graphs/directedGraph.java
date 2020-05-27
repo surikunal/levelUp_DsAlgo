@@ -213,53 +213,6 @@ public class directedGraph {
         }
     }
 
-    // // digikstra ===============================================
-
-    // class dpair {
-    // int src;
-    // int par;
-    // int w; // weight
-    // int wsf; // weight so far
-
-    // dpair(int src, int par, int w, int wsf) {
-    // this.src = src;
-    // this.par = par;
-    // this.w = w;
-    // this.wsf = wsf;
-    // }
-    // }
-
-    // // public static ArrayList<Edge>[] Egraph;
-    // public static void dijikstraAlgo(int src)
-    // {
-    // ArrayList<dpair> pq = new PriorityQueue<>((dpair a, dpair b)->{
-    // return a.wsf - b.wsf;
-    // });
-
-    // PriorityQueue<Edge> pq = new PriorityQueue<>();
-    // boolean[] vis = new boolean[N];
-    // pq.add(new dpair(src, -1, 0, 0));
-
-    // while (pq.size() != 0)
-    // {
-    // int size = pq.size();
-    // while (size-- > 0)
-    // {
-    // dpair rvtx = pq.poll();
-
-    // if (vis[rvtx.src])
-    // {
-    // continue;
-    // }
-
-    // if (rvtx.par != -1)
-    // {
-    // addEdge(dijikstraGraph, , v);
-    // }
-    // }
-    // }
-    // }
-
     public static void solve() {
         constructGraph();
         // topoSort();
