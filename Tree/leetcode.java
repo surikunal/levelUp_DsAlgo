@@ -132,7 +132,61 @@ class Solution2 {
     }
 }
 
-// leetcode 112. ===============================================
+// leetcode 863. ===================================================
+// method 1.
+class Solution {
+
+    public class TreeNode {
+        int val;
+        TreeNode left;
+        TreeNode right;
+
+        TreeNode(int x) {
+            val = x;
+        }
+    }
+
+    public boolean rootToNodePath_(TreeNode node, TreeNode target, ArrayList<TreeNode> path) {
+        if (node == null)
+            return false;
+        if (node.val == target.val) {
+            path.add(node);
+            return true;
+        }
+        boolean res = rootToNodePath_(node.left, target, path) || rootToNodePath_(node.right, target, path);
+        if (res)
+            path.add(node);
+        return res;
+    }
+
+    public void kDown(TreeNode node, int level, TreeNode blockNode, List<Integer> ans) {
+        if (node == null || node == blockNode)
+            return;
+        if (level == 0) {
+            ans.add(node.val);
+            return;
+        }
+        kDown(node.left, level - 1, blockNode, ans);
+        kDown(node.right, level - 1, blockNode, ans);
+    }
+
+    public List<Integer> distanceK(TreeNode root, TreeNode target, int K) {
+        ArrayList<TreeNode> path = new ArrayList<>();
+        rootToNodePath_(root, target, path);
+
+        TreeNode blockNode = null;
+        List<Integer> ans = new ArrayList<>();
+        for (int i = 0; i < path.size(); i++) {
+            if (K - i < 0)
+                break;
+            kDown(path.get(i), K - i, blockNode, ans);
+            blockNode = path.get(i);
+        }
+        return ans;
+    }
+}
+
+// leetcode 112. =====================================================
 
 class Solution {
 
@@ -206,6 +260,33 @@ class Solution {
         List<Integer> smallAns = new ArrayList<>();
         pathSum(root, sum, res, smallAns);
         return res;
+    }
+}
+
+// geeksforgeeks:
+// https://www.geeksforgeeks.org/find-maximum-path-sum-two-leaves-binary-tree/
+// * LEAF TO LEAF SUM
+
+class GfG {
+    public static int max_LeafToLeafSum;
+
+    public static int maxPathSum(Node root) {
+        max_LeafToLeafSum = (int) -1e8;
+        leafToLeaf(root);
+        return max_LeafToLeafSum;
+    }
+
+    public static int leafToLeaf(Node node) {
+        if (node == null)
+            return 0;
+        int left = leafToLeaf(node.left);
+        int right = leafToLeaf(node.right);
+
+        if (node.left != null && node.right != null) {
+            max_LeafToLeafSum = Math.max(max_LeafToLeafSum, left + right + node.data);
+            return Math.max(left, right) + node.data;
+        }
+        return (node.left == null ? right : left) + node.data;
     }
 }
 

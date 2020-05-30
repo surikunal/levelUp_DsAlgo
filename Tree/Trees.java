@@ -523,13 +523,13 @@ class Trees {
                 Node rnode = que.removeFirst();
                 if (rnode.left != null)
                     que.addLast(rnode.left);
-                    if (rnode.right != null)
+                if (rnode.right != null)
                     que.addLast(rnode.right);
             }
         }
         System.out.println();
     }
-    
+
     // right view.
     public static void rightView(Node node) {
         LinkedList<Node> que = new LinkedList<>();
@@ -540,9 +540,9 @@ class Trees {
             while (size-- > 0) {
                 Node rnode = que.removeFirst();
                 if (rnode.left != null)
-                que.addLast(rnode.left);
+                    que.addLast(rnode.left);
                 if (rnode.right != null)
-                que.addLast(rnode.right);
+                    que.addLast(rnode.right);
                 prev = rnode; // when prev comes out of while loop then its value is always the last one of a
                 // level
             }
@@ -550,11 +550,44 @@ class Trees {
         }
         System.out.println();
     }
-    
-    // vertical order.
-    
-    public static void verticalOrder(Node node) {
 
+    // vertical order.
+
+    static int leftMinValue = 0;
+    static int rightMaxValue = 0;
+
+    public static void width(Node node, int lev) {
+        if (node == null)
+            return;
+
+        leftMinValue = Math.min(leftMinValue, lev);
+        rightMaxValue = Math.max(rightMaxValue, lev);
+
+        width(node.left, lev - 1);
+        width(node.right, lev + 1);
+    }
+
+    public static class pairVO {
+        Node node; // original node
+        int vl = 0; // vertical level
+        public pairVO(Node node, int vl) {
+            this.node = node;
+            this.vl = vl;
+        }
+    }
+
+    public static void verticalOrder(Node node) {
+        width(node, 0);
+        int n = rightMaxValue - leftMinValue + 1;
+        ArrayList<ArrayList<Integer>> ans = new ArrayList<>(); // vector<vector<int>> (n,vector<int>());
+
+        for (int i = 0; i < n; i++)
+            ans.add(new ArrayList<>());
+
+        LinkedList<pairVO> que = new LinkedList<>();
+        que.addLast(new pairVO(node, -leftMinValue));   
+        // so that level will become now like 0, 1, 2, 3, 4, 5
+        // and not like                       -2, -1, 0, 1, 2
     }
 
     public static void set05(Node node) {

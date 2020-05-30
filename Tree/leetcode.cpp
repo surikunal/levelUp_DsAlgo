@@ -15,7 +15,7 @@ struct TreeNode
 
 auto SpeedUp = []() {
     std::ios_base::sync_with_stdio(NULL);
-    cin.tie(NULL);
+    cin.tie(NULL); 
     cout.tie(NULL);
     return NULL;
 }();
@@ -40,7 +40,64 @@ public:
     }
 };
 
-// leetcode 112. ===========================================
+// leetcode 863. ==================================================
+// method 1. 
+class Solution
+{
+public:
+    struct TreeNode
+    {
+        int val;
+        TreeNode *left;
+        TreeNode *right;
+        TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+    };
+
+    bool rootToNodePath(TreeNode *node, TreeNode *target, vector<TreeNode *> &path)
+    {
+        if (node == nullptr)
+            return false;
+        if (node->val == target->val)
+        {
+            path.push_back(node);
+            return true;
+        }
+        bool res = rootToNodePath(node->left, target, path) || rootToNodePath(node->right, target, path);
+        if (res)
+            path.push_back(node);
+        return res;
+    }
+    void kDown(TreeNode *node, int level, TreeNode *blockNode, vector<int> &ans)
+    {
+        if (node == nullptr || node == blockNode)
+            return;
+        if (level == 0)
+        {
+            ans.push_back(node->val);
+            return;
+        }
+        kDown(node->left, level - 1, blockNode, ans);
+        kDown(node->right, level - 1, blockNode, ans);
+    }
+    vector<int> distanceK(TreeNode *root, TreeNode *target, int K)
+    {
+        vector<TreeNode *> path;
+        rootToNodePath(root, target, path);
+
+        vector<int> ans;
+        TreeNode *blockNode = nullptr;
+        for (int i = 0; i < path.size(); i++)
+        {
+            if (K - i < 0)
+                break;
+            kDown(path[i], K - i, blockNode, ans);
+            blockNode = path[i];
+        }
+        return ans;
+    }
+};
+
+// leetcode 112. ==================================================
 
 auto SpeedUp = []() {
     std::ios::sync_with_stdio(false);
@@ -96,6 +153,41 @@ public:
         return res;
     }
 };
+
+// geeksforgeeks:
+// https://www.geeksforgeeks.org/find-maximum-path-sum-two-leaves-binary-tree/
+// * LEAF TO LEAF SUM
+class GFG
+{
+    struct Node
+    {
+        int data;
+        Node *left, *right;
+    };
+
+    int sum_leafToLeaf;
+    int leafToLeaf(Node *node)
+    {
+        if (node == NULL)
+            return 0;
+        int left = leafToLeaf(node->left);
+        int right = leafToLeaf(node->right);
+
+        if (node->left != NULL && node->right != NULL)
+        {
+            sum_leafToLeaf = max(sum_leafToLeaf, left + right + node->data);
+            return max(left, right) + node->data;
+        }
+        return (node->left == nullptr ? right : left) + node->data;
+    }
+    int maxPathSum(Node *root)
+    {
+        sum_leafToLeaf = (int)-1e8;
+        leafToLeaf(root);
+        return sum_leafToLeaf;
+    }
+};
+
 // leetcode 124. ===========================================
 
 struct TreeNode
