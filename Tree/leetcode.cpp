@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <queue>
 using namespace std;
 // 236. ==================================================
 //* LOWEST COMMON ANCESTOR.
@@ -15,7 +16,7 @@ struct TreeNode
 
 auto SpeedUp = []() {
     std::ios_base::sync_with_stdio(NULL);
-    cin.tie(NULL); 
+    cin.tie(NULL);
     cout.tie(NULL);
     return NULL;
 }();
@@ -41,7 +42,7 @@ public:
 };
 
 // leetcode 863. ==================================================
-// method 1. 
+// method 1.
 class Solution
 {
 public:
@@ -225,5 +226,47 @@ public:
     {
         maxPathSum_(root);
         return maxNodeToNodeSum;
+    }
+};
+
+// 199. ==========================================
+// right side view of a tree
+
+class Solution
+{
+public:
+    struct TreeNode
+    {
+        int val;
+        TreeNode *left;
+        TreeNode *right;
+        TreeNode() : val(0), left(nullptr), right(nullptr) {}
+        TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+        TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+    };
+    vector<int> rightSideView(TreeNode *root)
+    {
+        vector<int> ans;
+        if (root == nullptr)
+            return ans;
+        queue<TreeNode *> que;
+        que.push(root);
+        while (que.size() != 0)
+        {
+            int size = que.size();
+            TreeNode *prev = nullptr;
+            while (size-- > 0)
+            {
+                TreeNode *rvtx = que.front();
+                que.pop();
+                if (rvtx->left != nullptr)
+                    que.push(rvtx->left);
+                if (rvtx->right != nullptr)
+                    que.push(rvtx->right);
+                prev = rvtx;
+            }
+            ans.push_back(prev->val);
+        }
+        return ans;
     }
 };

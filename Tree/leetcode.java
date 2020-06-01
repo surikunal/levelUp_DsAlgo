@@ -333,3 +333,30 @@ class Solution {
         return Math.max(max_, node.val);
     }
 }
+
+// 199. ==========================================
+// right side view of a tree
+
+class Solution {
+    public List<Integer> rightSideView(TreeNode root) {
+        List<Integer> ans = new ArrayList<>();
+        if (root == null)
+            return ans;
+        LinkedList<TreeNode> que = new LinkedList<>();
+        que.addLast(root);
+        while (que.size() != 0) {
+            int size = que.size();
+            TreeNode prev = null;
+            while (size-- > 0) {
+                TreeNode rvtx = que.removeFirst();
+                if (rvtx.left != null)
+                    que.addLast(rvtx.left);
+                if (rvtx.right != null)
+                    que.addLast(rvtx.right);
+                prev = rvtx;
+            }
+            ans.add(prev.val);
+        }
+        return ans;
+    }
+}
