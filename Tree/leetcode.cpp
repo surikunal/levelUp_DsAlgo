@@ -270,3 +270,72 @@ public:
         return ans;
     }
 };
+
+// 235. ===========================================
+// LCA of BST
+// recursion
+
+class Solution
+{
+    struct TreeNode
+    {
+        int val;
+        TreeNode *left;
+        TreeNode *right;
+        TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+    };
+
+public:
+    TreeNode *lowestCommonAncestor(TreeNode *node, TreeNode *p, TreeNode *q)
+    {
+        std::ios_base::sync_with_stdio(false);
+        cin.tie(NULL);
+        cout.tie(NULL);
+        if (node == nullptr)
+            return nullptr;
+        if (p->val < node->val && q->val < node->val)
+            return lowestCommonAncestor(node->left, p, q);
+        else if (p->val > node->val && q->val > node->val)
+            return lowestCommonAncestor(node->right, p, q);
+        else
+            return node;
+    }
+};
+
+// iterative
+class Solution
+{
+public:
+    bool find(TreeNode *node, int data)
+    {
+        TreeNode *curr = node;
+        while (node != nullptr)
+        {
+            if (curr->val == data)
+                return true;
+            else if (curr->val < data)
+                curr = curr->right;
+            else
+                curr = curr->left;
+        }
+        return false;
+    }
+    
+    TreeNode *lowestCommonAncestor(TreeNode *root, TreeNode *p, TreeNode *q)
+    {
+        std::ios_base::sync_with_stdio(false);
+        cin.tie(NULL);
+        cout.tie(NULL);
+        TreeNode *curr = root;
+        while (curr != nullptr)
+        {
+            if (p->val < curr->val && q->val < curr->val)
+                curr = curr->left;
+            else if (p->val > curr->val && q->val > curr->val)
+                curr = curr->right;
+            else
+                return find(curr, p->val) && find(curr, q->val) ? curr : nullptr;
+        }
+        return nullptr;
+    }
+};

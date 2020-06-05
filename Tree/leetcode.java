@@ -360,3 +360,128 @@ class Solution {
         return ans;
     }
 }
+
+// Leetcode 987.====================================================
+// vertical order
+// * but it is giving wrong answer in leetcode (only in my profile)
+class Solution {
+    static int leftMinValue = 0;
+    static int rightMaxValue = 0;
+
+    public static void width(TreeNode node, int lev) {
+        if (node == null)
+            return;
+
+        leftMinValue = Math.min(leftMinValue, lev);
+        rightMaxValue = Math.max(rightMaxValue, lev);
+
+        width(node.left, lev - 1);
+        width(node.right, lev + 1);
+    }
+
+    public static class pairVO implements Comparable<pairVO> {
+        TreeNode node; // actual Node
+        int vl = 0; // vertical Level
+
+        public pairVO(TreeNode node, int vl) {
+            this.node = node;
+            this.vl = vl;
+        }
+
+        @override
+        public int compareTo(pairVO o) { // for c++: bool opeartor < ( pairvo const & o) const{
+            if (this.vl == o.vl)
+                return this.node.val - o.node.val; // in c++: replace '-' with '>'
+            return this.vl - o.vl; // default behaviour of que // in c++: replace '-' with '>'
+        }
+    }
+
+    public List<List<Integer>> verticalTraversal(TreeNode root) {
+        List<List<Integer>> ans = new ArrayList<>();
+        if (root == null)
+            return ans;
+
+        width(root, 0);
+        int n = rightMaxValue - leftMinValue + 1;
+        for (int i = 0; i < n; i++)
+            ans.add(new ArrayList<>());
+
+        PriorityQueue<pairVO> pque = new PriorityQueue<>();
+        PriorityQueue<pairVO> cque = new PriorityQueue<>();
+
+        pque.add(new pairVO(root, -leftMinValue));
+
+        while (pque.size() != 0) {
+            int size = pque.size();
+            while (size-- > 0) {
+                pairVO rpair = pque.poll();
+                ans.get(rpair.vl).add(rpair.node.val);
+
+                if (rpair.node.left != null)
+                    cque.add(new pairVO(rpair.node.left, rpair.vl - 1));
+                if (rpair.node.right != null)
+                    cque.add(new pairVO(rpair.node.right, rpair.vl + 1));
+            }
+
+            PriorityQueue<pairVO> temp = pque;
+            pque = cque;
+            cque = temp;
+        }
+    }
+}
+
+// 235. ===========================================
+// LCA of BST
+// recursion
+
+class Solution {
+    public class TreeNode {
+        int val;
+        TreeNode left;
+        TreeNode right;
+
+        TreeNode(int x) {
+            val = x;
+        }
+    }
+
+    public TreeNode lowestCommonAncestor(TreeNode node, TreeNode p, TreeNode q) {
+        if (node == null)
+            return null;
+        if (p.val < node.val && q.val < node.val)
+            return lowestCommonAncestor(node.left, p, q);
+        else if (p.val > node.val && q.val > node.val)
+            return lowestCommonAncestor(node.right, p, q);
+        else
+            return node;
+    }
+}
+
+// iterative
+class Solution {
+    public boolean find(TreeNode node, int data) {
+        TreeNode curr = node;
+        while (node != null) {
+            if (curr.val == data)
+                return true;
+            else if (curr.val < data)
+                curr = curr.right;
+            else
+                curr = curr.left;
+        }
+        return false;
+    }
+
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        TreeNode curr = root;
+        while (curr != null) {
+            if (p.val < curr.val && q.val < curr.val)
+                curr = curr.left;
+            else if (p.val > curr.val && q.val > curr.val)
+                curr = curr.right;
+            else
+                return find(curr, p.val) && find(curr, q.val) ? curr : null;
+        }
+        return null;
+    }
+}
