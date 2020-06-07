@@ -108,3 +108,40 @@ int minimumEle(Node *node) // logn
 
     return curr->data;
 }
+
+//In Order
+void allNodesInRange_01(Node *node, int a, int b, vector<int> &ans)
+{
+    if (node == nullptr)
+        return;
+
+    allNodesInRange_01(node->left, a, b, ans);
+
+    //sorted Region.
+    if (node->data >= a && node->data <= b)
+        ans.push_back(node->data);
+
+    allNodesInRange_01(node->right, a, b, ans);
+}
+
+// preOrder
+// here we are searching a LCA node in Log(N) and then calling on both left and right i.e., O(n)
+// means in worst case complexicity is O(n)  // when LCA is root node
+void allNodesInRange_02(Node *node, int a, int b, vector<int> &ans)
+{
+    if (node == nullptr)
+        return;
+
+    if (node->data >= a && node->data <= b)
+        ans.push_back(node->data);
+
+    if (b < node->data && a < node->data)
+        allNodesInRange_02(node->left, a, b, ans);
+    else if (b > node->data && a > node->data)
+        allNodesInRange_02(node->right, a, b, ans);
+    else
+    {
+        allNodesInRange_02(node->left, a, b, ans);
+        allNodesInRange_02(node->right, a, b, ans);
+    }
+}

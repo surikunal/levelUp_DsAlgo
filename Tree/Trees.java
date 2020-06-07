@@ -686,6 +686,7 @@ class Trees {
     // DIAGONAL VIEW AND DIAGONAL VIEW SUM
 
     static int leftDiagonalMinValue = 0;
+
     public static void widhtDiagonal(Node node, int lev) {
         if (node == null)
             return;
@@ -748,15 +749,96 @@ class Trees {
         System.out.println();
     }
 
+    // convert the tree given in a doubly linked list
+    static Node DLLhead = null;
+    static Node DLLprev = null;
+
+    public static void DLL(Node node) {
+        if (node == null)
+            return;
+
+        DLL(node.left);
+
+        if (DLLhead == null) {
+            DLLhead = node;
+        } else {
+            DLLprev.right = node;
+            node.left = DLLprev;
+        }
+        DLLprev = node;
+
+        DLL(node.right);
+    }
+
+    // all solutions . =====================================================
+    static class allSol {
+        int height = -1; // bcz height of null is -1
+        int size = 0;
+        boolean find = false;
+
+        Node pred = null;
+        Node succ = null;
+        Node prev = null;
+
+        int ceil = Integer.MIN_VALUE;
+        int floor = Integer.MAX_VALUE;
+    }
+
+    /* for BTree */
+
+    public static void allSolution(Node node, int data, int level, allSol pair) {
+        if (node == null) {
+            return;
+        }
+
+        pair.height = Math.max(pair.height, level);
+
+        pair.size++;
+
+        pair.find = pair.find || node.data == data;
+
+        // ===========CEIL AND FLOOR VALUE===============
+
+        if (node.data > data && node.data < pair.ceil) {
+            pair.ceil = node.data;
+        }
+
+        if (node.data < data && node.data > pair.floor) {
+            pair.floor = node.data;
+        }
+
+        /* for Inorder */
+        allSolution(node.left, data, level + 1, pair);
+
+        if (node.data == data && pair.pred == null) {
+            pair.pred = pair.prev;
+        } else if (pair.prev != null && pair.succ == null && pair.prev.data == data) {
+            pair.succ = node;
+        }
+
+        pair.prev = node;
+
+        allSolution(node.right, data, level + 1, pair);
+    }
+
     public static void set05(Node node) {
-        // leftView(node);
-        // rightView(node);
+        leftView(node);
+        rightView(node);
         verticalOrder(node);
-        // verticalOrderSum(node);
-        // bottomView(node);
-        // topView(node);
-        // diagonalOrder(node);
-        // diagonalOrderSum(node);
+        verticalOrderSum(node);
+        bottomView(node);
+        topView(node);
+        diagonalOrder(node);
+        diagonalOrderSum(node);
+
+        DLL(node);
+
+        allSol pair = new allSol();
+        allSolution(node, 80, 0, pair);
+        System.out.println(pair.height);
+        System.out.println(pair.size);
+        System.out.println(pair.find);
+        System.out.println(pair.pred.data);
     }
 
     public static void solve() {
@@ -769,6 +851,6 @@ class Trees {
         // set02(node);
         // set03(node);
         // set04(node);
-        set05(node);
+        // set05(node);
     }
 }
