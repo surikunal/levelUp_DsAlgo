@@ -191,10 +191,8 @@ public class l001 {
                 System.out.println("NullPointException!");
                 return -1;
             }
-
             return getNodeAt(pos).data;
         }
-
     }
 
     public static void main(String[] args) {
