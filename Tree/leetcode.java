@@ -485,3 +485,29 @@ class Solution {
         return null;
     }
 }
+
+// BST=============================================
+
+// leetcode 98. ===================================
+
+class Solution {
+    double prev = -Double.MAX_VALUE;
+
+    public boolean isValidBST(TreeNode root) {
+        if (root == null)
+            return true;
+        if (!isValidBST(root.left))
+            return false;
+
+        if (prev >= root.val)
+            return false;
+        prev = root.val;
+
+        if (!isValidBST(root.right))
+            return false;
+        return true;
+    }
+}
+
+
+// leetcode 99. ===================================

@@ -320,7 +320,7 @@ public:
         }
         return false;
     }
-    
+
     TreeNode *lowestCommonAncestor(TreeNode *root, TreeNode *p, TreeNode *q)
     {
         std::ios_base::sync_with_stdio(false);
@@ -337,5 +337,90 @@ public:
                 return find(curr, p->val) && find(curr, q->val) ? curr : nullptr;
         }
         return nullptr;
+    }
+};
+
+// BST=============================================
+
+// leetcode 98. ===================================
+
+struct TreeNode
+{
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode() : val(0), left(nullptr), right(nullptr) {}
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+};
+auto SpeedUp = []() {
+    std::ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    return NULL;
+}();
+class Solution
+{
+public:
+    long long prev = -1e12;
+    bool isValidBST(TreeNode *root)
+    {
+        if (root == nullptr)
+            return true;
+
+        if (!isValidBST(root->left))
+            return false;
+
+        if (prev >= root->val)
+            return false;
+        prev = root->val;
+
+        if (!isValidBST(root->right))
+            return false;
+
+        return true;
+    }
+};
+
+// leetcode 99. ===================================
+class Solution
+{
+public:
+    TreeNode *a = nullptr;
+    TreeNode *b = nullptr;
+    TreeNode *c = nullptr; // previous
+    bool recoverTree_(TreeNode *root)
+    {
+        if (root == nullptr)
+            return false;
+
+        if (recoverTree_(root->left))
+            return true;
+
+        if (c != nullptr && c->val > root->val)
+        {
+            b = root;
+            if (a == nullptr)
+                a = c;
+            else
+                return true;
+        }
+
+        c = root;
+
+        if (recoverTree_(root->right))
+            return true;
+
+        return false;
+    }
+    void recoverTree(TreeNode *root)
+    {
+        recoverTree_(root);
+        if (a != nullptr)
+        {
+            int temp = a->val;
+            a->val = b->val;
+            b->val = temp;
+        }
     }
 };
