@@ -509,5 +509,39 @@ class Solution {
     }
 }
 
-
 // leetcode 99. ===================================
+class Solution {
+    TreeNode a = null;
+    TreeNode b = null;
+    TreeNode c = null; // previous
+
+    public boolean recoverTree_(TreeNode root) {
+        if (root == null)
+            return false;
+
+        if (recoverTree_(root.left))
+            return true;
+
+        if (c != null && c.val > root.val) {
+            b = root;
+            if (a == null)
+                a = c;
+            else
+                return true;
+        }
+        c = root;
+        if (recoverTree_(root.right))
+            return true;
+
+        return false;
+    }
+
+    public void recoverTree(TreeNode root) {
+        recoverTree_(root);
+        if (a != null) {
+            int temp = a.val;
+            a.val = b.val;
+            b.val = temp;
+        }
+    }
+}
