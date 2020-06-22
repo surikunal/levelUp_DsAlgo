@@ -196,5 +196,117 @@ public class leetcode {
         return head.next;
     }
 
-    
+    // Leetcode 328:
+    public ListNode oddEven(ListNode head) {
+        if (head == null || head.next == null)
+            return head;
+
+        ListNode odd = head;
+        ListNode even = head.next;
+        ListNode evenHead = even;
+
+        while (even != null && even.next != null) {
+            odd.next = even.next;
+            odd = odd.next;
+            even.next = odd.next;
+            even = even.next;
+        }
+        odd.next = evenHead;
+        return head;
+    }
+
+    // leetcode 141:
+    public boolean hasCycle(ListNode head) {
+        if (head == null || head.next == null)
+            return false;
+
+        ListNode slow = head, fast = head;
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+            if (slow == fast)
+                return true;
+        }
+        return false;
+    }
+
+    // leetcode 142.
+    public ListNode detectCycle(ListNode head) {
+        if (head == null || head.next == null)
+            return null;
+
+        ListNode slow = head;
+        ListNode fast = head;
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+            if (slow == fast)
+                break;
+        }
+
+        if (slow != head)
+            return head;
+
+        slow = head;
+        while (slow != fast) {
+            slow = slow.next;
+            fast = fast.next;
+        }
+        return slow;
+    }
+
+    // leetcode 160.
+    public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+        if (headA == null || headB == null)
+            return null;
+
+        if (headA.next == null && headB.next == null) {
+            if (headA.val == headB.val)
+                return headA;
+            else
+                return null;
+        }
+
+        ListNode curr = headA;
+        while (curr.next != null)
+            curr = curr.next;
+
+        curr.next = headA;
+        ListNode rv = detectCycle(headB);
+        curr.next = null;
+
+        return rv;
+    }
+
+    // leetcode 148. sort list in NlogN
+    public ListNode sortList(ListNode head) {
+        if (head == null || head.next == null)
+            return head;
+
+        ListNode mid = getMidNode_02(head);
+        ListNode nhead = mid.next;
+        mid.next = null;
+
+        return mergeTwoLists(sortList(head), sortList(nhead));
+    }
+
+    // leetcode 23. merger k sorted lists
+    public ListNode mergerKLists(ListNode[] lists, int si, int ei) {
+        if (si > ei)
+            return null;
+        if (si == ei)
+            return lists[si];
+        if (si + 1 == ei)
+            return mergeTwoLists(lists[si], lists[si + 1]);
+        int mid = (si + ei) / 2;
+        return mergeTwoLists(mergerKLists(lists, si, mid), mergerKLists(lists, mid + 1, ei));
+    }
+
+    public ListNode mergeKLists(ListNode[] lists) {
+        if (lists.length == 0) {
+            return null;
+        }
+        int si = 0, ei = lists.length - 1;
+        return mergerKLists(lists, si, ei);
+    }
 }
