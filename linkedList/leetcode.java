@@ -309,4 +309,55 @@ public class leetcode {
         int si = 0, ei = lists.length - 1;
         return mergerKLists(lists, si, ei);
     }
+
+    // leetcode 92. reverse linked list 2
+    ListNode temp_head = null;
+    ListNode temp_tail = null;
+
+    public ListNode reverseBetween(ListNode head, int m, int n) {
+        if (head.next == null || m == n)
+            return head;
+
+        int idx = 1;
+        ListNode curr = head;
+        ListNode prev = null;
+        ListNode nhead = head;
+
+        while (curr != null) {
+            while (idx >= m && idx <= n) {
+                ListNode forw = curr.next;
+                curr.next = null;
+
+                if (temp_head == null) {
+                    temp_head = curr;
+                    temp_tail = curr;
+                } else {
+                    curr.next = temp_head;
+                    temp_head = curr;
+                }
+
+                curr = forw;
+                idx++;
+            }
+
+            if (temp_tail != null) {
+                temp_tail.next = curr;
+                if (prev != null)
+                    prev.next = temp_head;
+                else
+                    nhead = temp_head;
+                break;
+            }
+
+            prev = curr;
+            curr = curr.next;
+            idx++;
+        }
+        return nhead;
+    }
+
+    // leetcode 25. reverse nodes in K groups
+    public ListNode reverseKGroup(ListNode head, int k) {
+        
+    }
 }
