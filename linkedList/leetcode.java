@@ -418,4 +418,35 @@ public class leetcode {
         }
         return original_head;
     }
+
+    // leetcode 61. rotate list
+
+    /*
+     * I first used a ListNode p, and point it to the head, then move it to the end
+     * of the list, and at the same time get the length of the list. Then p.next =
+     * head; gives me a circle. At this time, by moving p for len-k times, it will
+     * be pointing to the node before the break point. Then all we need to do is
+     * record the next node as head, and break the circle with p.next = null.
+     */
+
+    public ListNode rotateRight(ListNode head, int k) {
+        if (head == null || head.next == null || k == 0)
+            return head;
+
+        ListNode p = head;
+        int len = 1;
+        while (p.next != null) {
+            len++;
+            p = p.next;
+        }
+
+        p.next = head;
+        k %= len;
+        for (int i = 0; i < len - k; i++)
+            p = p.next;
+
+        ListNode nhead = p.next;
+        p.next = null;
+        return nhead;
+    }
 }
