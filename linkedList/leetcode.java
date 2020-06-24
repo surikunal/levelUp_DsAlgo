@@ -357,7 +357,65 @@ public class leetcode {
     }
 
     // leetcode 25. reverse nodes in K groups
+
+    ListNode original_head = null;
+    ListNode original_tail = null;
+
+    ListNode temp_head_ = null;
+    ListNode temp_tail_ = null;
+
+    public int len(ListNode root) {
+        int l = 0;
+        while (root != null) {
+            l++;
+            root = root.next;
+        }
+        return l;
+    }
+
     public ListNode reverseKGroup(ListNode head, int k) {
-        
+        if (head == null || head.next == null || k == 0 || k == 1)
+            return head;
+
+        int len = len(head);
+        if (len < k)
+            return head;
+
+        ListNode curr = head;
+        while (curr != null) {
+            int tk = k; // temp k
+            while (tk-- > 0) {
+                ListNode forw = curr.next;
+                curr.next = null;
+
+                if (temp_head_ == null) {
+                    temp_head_ = curr;
+                    temp_tail_ = curr;
+                } else {
+                    curr.next = temp_head_;
+                    temp_head_ = curr;
+                }
+                curr = forw;
+            }
+
+            len -= k;
+
+            if (original_tail == null) {
+                original_head = temp_head_;
+                original_tail = temp_tail_;
+            } else {
+                original_tail.next = temp_head_;
+                original_tail = temp_tail_;
+            }
+
+            temp_head_ = null;
+            temp_tail_ = null;
+
+            if (len < k) {
+                original_tail.next = curr;
+                curr = null;
+            }
+        }
+        return original_head;
     }
 }

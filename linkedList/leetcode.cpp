@@ -11,6 +11,15 @@ public:
         ListNode(int x) : val(x), next(NULL) {}
     };
 
+    struct ListNode
+    {
+        int val;
+        ListNode *next;
+        ListNode() : val(0), next(nullptr) {}
+        ListNode(int x) : val(x), next(nullptr) {}
+        ListNode(int x, ListNode *next) : val(x), next(next) {}
+    };
+
     // Leetcode 876: getMid
     ListNode *getMidNode(ListNode *node)
     {
@@ -324,7 +333,7 @@ public:
         return mergeTwoLists(sortList(head), sortList(nhead));
     }
 
-    // leetcode 23-> merger k sorted lists
+    // leetcode 23. merger k sorted lists
     ListNode *mergerKLists(vector<ListNode *> &lists, int si, int ei)
     {
         if (si > ei)
@@ -352,6 +361,9 @@ public:
     ListNode *temp_tail = nullptr;
     ListNode *reverseBetween(ListNode *head, int m, int n)
     {
+        std::ios::sync_with_stdio(false);
+        cin.tie(NULL);
+        cout.tie(NULL);
         if (head->next == nullptr || m == n)
             return head;
         int idx = 1;
@@ -382,12 +394,128 @@ public:
 
             if (temp_tail != nullptr)
             {
-                t
+                temp_tail->next = curr;
+                if (prev != nullptr)
+                    prev->next = temp_head;
+                else
+                    nhead = temp_head;
+                break;
             }
 
             prev = curr;
             curr = curr->next;
             idx++;
         }
+        return nhead;
+    }
+
+    // leetcode 25. Reverse Nodes in k-Group
+    ListNode *original_head = nullptr;
+    ListNode *original_tail = nullptr;
+
+    ListNode *temp_head_ = nullptr;
+    ListNode *temp_tail_ = nullptr;
+    int len_(ListNode *node)
+    {
+        int l = 0;
+        while (node != nullptr)
+        {
+            l++;
+            node = node->next;
+        }
+        return l;
+    }
+
+    ListNode *reverseKGroup(ListNode *head, int k)
+    {
+        ios::sync_with_stdio(false);
+        cin.tie(NULL);
+        cout.tie(NULL);
+
+        if (head == nullptr || head->next == nullptr || k == 0 || k == 1)
+            return head;
+
+        int len = len_(head);
+        if (len < k)
+            return head;
+
+        ListNode *curr = head;
+        while (curr != nullptr)
+        {
+            int tk = k;
+            while (tk-- > 0)
+            {
+                ListNode *forw = curr->next;
+                curr->next = nullptr;
+
+                if (temp_head_ == nullptr)
+                {
+                    temp_head_ = curr;
+                    temp_tail_ = curr;
+                }
+                else
+                {
+                    curr->next = temp_head_;
+                    temp_head_ = curr;
+                }
+                curr = forw;
+            }
+
+            len -= k;
+
+            if (original_tail == nullptr)
+            {
+                original_head = temp_head_;
+                original_tail = temp_tail_;
+            }
+            else
+            {
+                original_tail->next = temp_head_;
+                original_tail = temp_tail_;
+            }
+
+            temp_head_ = nullptr;
+            temp_tail_ = nullptr;
+
+            if (len < k)
+            {
+                original_tail->next = curr;
+                curr = nullptr;
+            }
+        }
+        return original_head;
+    }
+
+    // leetcode 61. rotate list
+    ListNode *rotateRight(ListNode *head, int k)
+    {
+        if (k == 0 || head == nullptr || head->next == nullptr)
+            return head;
+        ListNode *slow = head;
+        ListNode *fast = head;
+        int len = len_(head);
+        k %= len;
+        if (k == 1)
+            return head;
+        while (k-- > 0)
+            fast = fast->next;
+
+        while (fast != nullptr && fast->next != nullptr)
+        {
+            slow = slow->next;
+            fast = fast->next;
+        }
+
+        ListNode *nhead = slow->next;
+        slow->next = nullptr;
+        fast->next = head;
+
+        return nhead;
     }
 };
+
+int main(int args, char **argv)
+{
+    
+    rotateRight(root, k);
+}
