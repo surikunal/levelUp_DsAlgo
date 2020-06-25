@@ -514,4 +514,48 @@ public:
         p->next = nullptr;
         return nhead;
     }
+
+    // leetcode 203. Remove Linked List Elements
+    ListNode *removeElements(ListNode *head, int val)
+    {
+        ios::sync_with_stdio(false);
+        cin.tie(NULL);
+        cout.tie(NULL);
+
+        ListNode *nhead = new ListNode(-1);
+        nhead->next = head;
+
+        ListNode *prev = nhead, *curr = head;
+        while (curr != nullptr)
+        {
+            if (curr->val == val)
+                prev->next = curr->next;
+            else
+                prev = prev->next;
+            curr = curr->next;
+        }
+        return nhead->next;
+    }
+
+    // leetcode 83. Remove Duplicates from Sorted List
+    ListNode *deleteDuplicates(ListNode *head)
+    {
+        std::ios_base::sync_with_stdio(false);
+        cin.tie(NULL);
+        cout.tie(NULL);
+
+        if (head == nullptr || head->next == nullptr)
+            return head;
+        ListNode *curr = head->next;
+        ListNode *prev = head;
+        while (curr != nullptr)
+        {
+            if (curr->val == prev->val)
+                prev->next = curr->next;
+            else
+                prev = prev->next;
+            curr = curr->next;
+        }
+        return head;
+    }
 };

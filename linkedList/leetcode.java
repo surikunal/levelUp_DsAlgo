@@ -449,4 +449,37 @@ public class leetcode {
         p.next = null;
         return nhead;
     }
+
+    // leetcode 203. Remove Linked List Elements
+    public ListNode removeElements(ListNode head, int val) {
+        ListNode nhead = new ListNode(-1);
+        nhead.next = head;
+        ListNode prev = nhead;
+        ListNode curr = head;
+        while (curr != null) {
+            if (curr.val == val)
+                prev.next = curr.next;
+            else
+                prev = prev.next;
+            curr = curr.next;
+        }
+        return nhead.next;
+    }
+
+    // leetcode 83. Remove Duplicates from Sorted List
+    public ListNode deleteDuplicates(ListNode head) {
+        if (head == null || head.next == null)
+            return head;
+        ListNode prev = head;
+        ListNode curr = head.next;
+
+        while (curr != null) {
+            if (curr.val == prev.val)
+                prev.next = curr.next;
+            else
+                prev = prev.next;
+            curr = curr.next;
+        }
+        return head;
+    }
 }
