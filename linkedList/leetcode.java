@@ -419,6 +419,55 @@ public class leetcode {
         return original_head;
     }
 
+    // another way to solve this question
+    // but i will prefer the last one
+    public ListNode reverseKGroup02(ListNode head, int k) {
+        if (head == null || head.next == null)
+            return head;
+
+        int len = len_(head);
+
+        if (len < k)
+            return head;
+
+        ListNode nhead = null;
+        ListNode ntail = head;
+
+        while (head != null) {
+            int temp = k;
+            ListNode ttail = null;
+            ListNode rev = null;
+
+            if (len >= k) {
+                while (head != null && temp != 0) {
+                    if (ttail == null)
+                        ttail = head;
+
+                    ListNode forw = head.next;
+                    head.next = rev;
+
+                    rev = head;
+                    head = forw;
+
+                    temp--;
+                }
+
+                len -= k;
+
+                if (nhead == null)
+                    nhead = rev;
+                else {
+                    ntail.next = rev;
+                    ntail = ttail;
+                }
+            } else {
+                ntail.next = head;
+                break;
+            }
+        }
+        return nhead;
+    }
+
     // leetcode 61. rotate list
 
     /*

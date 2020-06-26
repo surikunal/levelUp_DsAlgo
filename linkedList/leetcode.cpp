@@ -486,6 +486,66 @@ public:
         return original_head;
     }
 
+    // another way to solve this question
+    // but i will prefer the last one
+    ListNode *reverseKGroup02(ListNode *head, int k)
+    {
+        std::ios_base::sync_with_stdio(false);
+        cin.tie(nullptr);
+        cout.tie(nullptr);
+
+        if (head == nullptr || head->next == nullptr)
+            return head;
+
+        int len = len_(head);
+
+        if (len < k)
+            return head;
+
+        ListNode *nhead = nullptr;
+        ListNode *ntail = head;
+
+        while (head != nullptr)
+        {
+            ListNode *ttail = nullptr;
+            ListNode *rev = nullptr;
+            int temp = k;
+
+            if (len >= k)
+            {
+                while (head != nullptr && temp != 0)
+                {
+                    if (ttail == nullptr)
+                        ttail = head;
+
+                    ListNode *forw = head->next;
+                    head->next = rev;
+
+                    rev = head;
+                    head = forw;
+
+                    temp--;
+                }
+
+                len -= k;
+
+                if (nhead == nullptr)
+                    nhead = rev;
+                else
+                {
+                    ntail->next = rev;
+                    ntail = ttail;
+                }
+            }
+            else
+            {
+                ntail->next = head;
+                break;
+            }
+        }
+        return nhead;
+    }
+
     // leetcode 61. rotate list
 
     /* I first used a ListNode p, and point it to the head, then move it to the end of the list,
