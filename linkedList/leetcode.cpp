@@ -618,4 +618,28 @@ public:
         }
         return head;
     }
+
+    // leetcode 1019. Next Greater Node In Linked List
+    vector<int> nextLargerNodes(ListNode *head)
+    {
+        std::ios_base::sync_with_stdio(false);
+        cin.tie(NULL);
+        cout.tie(NULL);
+
+        vector<int> res, stack;
+        for (ListNode *curr = head; curr != nullptr; curr = curr->next)
+        {
+            while (stack.size() && res[stack.back()] < curr->val)
+            {
+                res[stack.back()] = curr->val;
+                stack.pop_back();
+            }
+            stack.push_back(res.size());
+            res.push_back(curr->val);
+        }
+
+        for (int i : stack)
+            res[i] = 0;
+        return res;
+    }
 };

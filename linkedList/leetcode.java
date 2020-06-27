@@ -531,4 +531,25 @@ public class leetcode {
         }
         return head;
     }
+
+    // leetcode 1019. Next Greater Node In Linked List
+    public int[] nextLargerNodes(ListNode head) {
+        ArrayList<Integer> arr = new ArrayList<>();
+        ListNode curr = head;
+        while (curr != null) {
+            arr.add(curr.val);
+            curr = curr.next;
+        }
+
+        int[] ans = new int[arr.size()];
+        Stack<Integer> st = new Stack<>();
+
+        for (int i = 0; i < arr.size(); i++) {
+            while (!st.isEmpty() && arr.get(i) > arr.get(st.peek()))
+                ans[st.pop()] = arr.get(i);
+            st.push(i);
+        }
+
+        return ans;
+    }
 }
