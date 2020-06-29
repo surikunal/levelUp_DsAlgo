@@ -1,19 +1,21 @@
-#include <iostream>
-#include <stack>
-using namespace std;
+import java.util.*;
+import java.lang.*;
+import java.io.*;
 
-int main() {
-	int t;
-	cin >> t;
+class stack {
+    public static Scaner scn = new Scanner(System.in);
+
+    public static void main (String[] args) {
+	int t = scn.nextInt();
 	int i;
 	while (t--)
 	{
-	    cin >> i;
-	    int arr[i];
+	    i = scn.nextInt();
+	    int[] arr = new int[i];
 	    for (int j = 0; j < i; j++)
-	        cin >> arr[j];
+	        arr[j] = scn.nextInt();
 	    
-	    stack<int> st;
+	    Stack<Integer> st = new Stack<>();
 	    st.push(-1);
 	    for(int k = 0; k < i; k++)
 	    {
@@ -22,10 +24,10 @@ int main() {
 	        st.push(k);
 	    }
 	    
-        int ans[st.size()];
+        int[] ans = new int[st.size()];
 	    for (int i = 0; i < st.size(); i++)
 	    {
-	        ans.push_back(arr[st.top()]);
+	        ans.add(arr[st.top()]);
 	        st.pop();
 	    }
 	    
@@ -35,4 +37,5 @@ int main() {
 	    cout << endl;
 	}
 	return 0;
+	}
 }
