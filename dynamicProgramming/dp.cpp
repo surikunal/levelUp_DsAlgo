@@ -130,6 +130,27 @@ int mazePath_multi_HVD(int sr, int sc, int er, int ec, vector<vector<int>> &dp)
     return dp[sr][sc] = count;
 }
 
+int mazePath_multi_HVD_DP(int sr, int sc, int er, int ec, vector<vector<int>> &dp)
+{
+    if (sr == er && sc == ec)
+        return dp[sr][sc] = 1;
+
+    if (dp[sr][sc] != 0)
+        return dp[sr][sc];
+
+    int count = 0;
+    for (int jump = 1; sr + jump <= er; jump++)
+        count += mazePath_multi_HVD(sr + jump, sc, er, ec, dp);
+
+    for (int jump = 1; sc + jump <= ec; jump++)
+        count += mazePath_multi_HVD(sr, sc + jump, er, ec, dp);
+
+    for (int jump = 1; sr + jump <= er && sc + jump <= ec; jump++)
+        count += mazePath_multi_HVD(sr + jump, sc + jump, er, ec, dp);
+
+    return dp[sr][sc] = count;
+}
+
 void set2()
 {
     int n = 3, m = 3;
@@ -137,6 +158,7 @@ void set2()
     cout << mazePathHVD(0, 0, n - 1, m - 1, dp) << endl;
     cout << mazePathHVD_DP(0, 0, n - 1, m - 1, dp) << endl;
     cout << mazePath_multi_HVD(0, 0, n - 1, m - 1, dp) << endl;
+    cout << mazePath_multi_HVD_DP(0, 0, n - 1, m - 1, dp) << endl;
 }
 
 void set1()
