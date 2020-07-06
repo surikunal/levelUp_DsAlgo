@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <list>
 using namespace std;
 
 void display(vector<int> &arr)
@@ -192,10 +193,60 @@ int boardPathDP(int sp, int ep, vector<int> &dp)
     return dp[0];
 }
 
+/* this codse is nothing but the observation from the answer
+means we just observerd the pattern from the answer
+and the pattern is
+first 2 elements are base case
+measn just push 1 and 1
+and next 4 elemets can be found from doubling the last one
+and for all other elemets we can get the answer by 
+multipliying last one by 2 and subtracting the elemet which is at 6th back postion from me */
+int boardPath_best(int sp, int ep)
+{
+    list<int> ll;
+    for (sp = ep; sp >= 0; sp--)
+    {
+        if (sp > ep - 2) // base case (for first 2 elements)
+        {
+            ll.push_front(1);
+            continue;
+        }
+
+        if (ll.size() <= 6) // for next 4 elements
+            ll.push_front(2 * ll.front());
+        else    // for all other elemets
+        {
+            /* we are also popping back the elemets so that size of ll wil never exceed 6 */
+            ll.push_front(2 * ll.front() - ll.back());
+            ll.pop_back();
+        }
+    }
+    return ll.front();
+}
+
+int boardPathWithDiceArrayDP(int sp, int ep, vector<int> &dp, vector<int> &diceArray)
+{
+    for (sp = ep; sp >= 0; sp--)
+    {
+        if (sp == ep)
+        {
+            dp[sp] = 1;
+            continue;
+        }
+
+        int count = 0;
+        for (int dice = 0; diceArray[dice] + sp <= ep && dice <= diceArray.size(); dice++)
+            count += dp[sp + diceArray[dice]];
+        dp[sp] = count;
+    }
+    return dp[0];
+}
+
 void set2()
 {
     int n = 3, m = 3;
     vector<vector<int>> dp(n, vector<int>(m, 0));
+    /* uncomment 1 at a time */
     // cout << mazePathHVD(0, 0, n - 1, m - 1, dp) << endl;
     // cout << mazePathHVD_DP(0, 0, n - 1, m - 1, dp) << endl;
     // cout << mazePath_multi_HVD(0, 0, n - 1, m - 1, dp) << endl;
