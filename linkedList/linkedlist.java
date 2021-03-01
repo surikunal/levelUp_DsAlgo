@@ -89,8 +89,8 @@ public class l001 {
 
                 prevNode.next = node;
                 node.next = temp;
+                this.size++;
             }
-            this.size++;
         }
 
         public void addAt(int data, int pos) {
