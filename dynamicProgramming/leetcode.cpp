@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 using namespace std;
 class Solution
 {
@@ -133,7 +134,7 @@ public:
     }
 
     // leetcode 64. Minimum Path Sum =====================================================
-    
+
     int minSum(int sr, int sc, vector<vector<int>> &grid, vector<vector<int>> &dp)
     {
         if (sr == grid.size() - 1 && sc == grid[0].size() - 1)
