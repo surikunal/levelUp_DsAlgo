@@ -6,6 +6,7 @@
 #include <vector>
 #include <queue>
 #include <algorithm>
+#include <string>
 
 #define vi vector<int>
 #define vb vector<bool>
@@ -787,7 +788,7 @@ void set2()
     // bfs2(0, visBool);
     // bfs3(0, visBool); // when cycle is not a concern
 
-    // isBipatite_BFS();
+    isBipatite_BFS();
 
     // topologicalSort();  //* check this function in java too
 
@@ -795,9 +796,9 @@ void set2()
 
     // kruskalAlgo(NumGraph);  //?????????????????????
 
-    dijikstraAlgo(6);
+    // dijikstraAlgo(6);
 
-    primsAlgo(6);
+    // primsAlgo(6);
 }
 
 void solve()
